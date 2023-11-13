@@ -442,12 +442,14 @@
     position: fixed;
     bottom: 10%;
     left: 50%;
-
-    background-color: #0e967bc9;
+    transform: translateX(-50%);
+    background-color:rgb(26, 65, 81);
     color: #fff;
-    padding: 10px;
-    border-radius: 5px;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     z-index: 999;
+    transition: opacity 0.5s ease-in-out;
 }
 
 .right-end-content {
@@ -911,6 +913,12 @@
         position: relative;
         right: 15%;
         width: 120%;
+    }
+    .notification {
+        display: none;
+        position: fixed;
+        bottom: 35%;
+        left: 22%;
     }
 
 }
