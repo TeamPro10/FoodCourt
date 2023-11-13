@@ -136,7 +136,7 @@
   }
   .cart {
     position: relative;
-    top: 10%;
+    top: 5%;
     /* right: 15%; */
     padding: 3%;
     /* width: 70vw; */
@@ -172,7 +172,12 @@
     border: 2px solid rgb(28, 165, 4);
     background-color: rgb(28, 165, 4);
   }
-
+  .order-details input[type="time"] {
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 150px;
+  }
   @media screen and (max-width: 768px){
     .menu h1 {
       position: relative;
@@ -344,7 +349,7 @@
 }
 .cart {
   position: relative;
-  top: 10%;
+  top: 5%;
   right: 15%;
   padding: 10%;
   border-radius: 10px;
