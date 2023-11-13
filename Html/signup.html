@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+   <meta charset="UTF-8">
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="shortcut icon" href="../Images/logo.png" type="image/x-icon">
+   <link rel="stylesheet" href="../css/signup.css">
+   <title>Signup</title>
+</head>
+
+<body>
+   <div class="container">
+      <div class="inner1">
+         <h1>Sign <span>Up</span></h1>
+         <div class="reset">
+            <form>
+               <div class="form-group">
+                  <label for="username">Username:</label>
+                  <input type="text" id="username" name="username" placeholder="Username">
+               </div>
+               <div class="form-group">
+                  <label for="email">Email:</label>
+                  <input type="email" id="email" name="email" placeholder="Email">
+               </div>
+               <div class="form-group">
+                  <label for="phone">Phone Number:</label>
+                  <input type="text" pattern="[6789][0-9]{9}" minlength="10" maxlength="10" id="phone" name="phone"
+                     placeholder="Phone number">
+               </div>
+               <div class="form-group">
+                  <label for="password">Password:</label>
+                  <input type="password" id="pwd" name="password" minlength="8" placeholder="Password"><br><br>
+               </div>
+               <div class="form-group">
+                  <input type="submit" value="Submit" id="submit">
+               </div>
+               <div>
+                  <p class="signup-link">Already have an account? <a href="../Html/login.html">Sign-in</a></p>
+                </div>
+            </form>
+         </div>
+         <p></p>
+      </div>
+
+      <div class="inner2">
+         <img src="../Images/sign up2.webp" alt="Signup Image">
+      </div>
+   </div>
+
+   <!-- Import Firebase App -->
+   
+   <script src="https://www.gstatic.com/firebasejs/5.0.0/firebase-app.js"></script>
+   
+   <script src="https://www.gstatic.com/firebasejs/5.0.0/firebase-auth.js"></script>
+
+
+   <script src="https://www.gstatic.com/firebasejs/5.0.0/firebase-firestore.js"></script>
+   <script src="../js/connection_db.js"></script>
+   <script type="module" src="../js/signup.js"></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,128 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+    background-color: whitesmoke;
+  }
+  
+  h1 {
+    font-size: 400%;
+    margin-bottom: 10%;
+  }
+  
+  img {
+    max-width: 40%;
+    height: 40%;
+    margin-bottom: 20%;
+  }
+  
+  form {
+    margin-bottom: 20%;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 3%;
+    position: relative;
+    bottom: 10vh;
+  }
+  
+  input[type="file"] {
+    display: block;
+    margin: 0 auto;
+    border: 3px solid black;
+    border-radius: 0.5em;
+    padding: 1%;
+    cursor: pointer;
+    position: relative;
+    bottom: 10vh;
+    
+    /* background-color: #d4ebd5; */
+    /* border-radius: 0.5cm; */
+  }
+  input[type="file"]::file-selector-button {
+    /* border: 3px solid rgb(255, 255, 255); */
+    /* border-radius: 0.5em; */
+    /* text-decoration:line-through; */
+    display: none;
+  }
+  input[type="file"]:active{
+    border: 3px solid rgb(171, 168, 168);
+    border-radius: 0.5em;
+  }
+  input[type="submit"] {
+    position: relative;
+    bottom: 10vh;
+    display: block;
+    width: 15vw;
+    margin: 0 auto;
+    padding: 10px 20px;
+    background-color: #007bff;
+    border: 3px solid rgb(77, 75, 235);
+    color: #fff;
+    /* text-decoration: solid; */
+    border-radius: 0.25cm;
+    cursor: pointer;
+  }
+  .img1{
+    height: 10%;
+    width: 10%;
+    display: inline-block;
+  }
+  h2{
+    position: relative;
+    bottom: 20vh;
+  }
+  a.button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #0a6c3b;
+    color: #fff;
+    text-decoration: solid;
+    position: relative;
+    bottom: 15vh;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s ease;
+    border-radius: 0.25cm;
+    
+  }
+  
+  a.button:hover {
+    background-color: #0056b3;
+  }
+  
+  @media (max-width: 600px) {
+    h1 {
+      font-size: 2.5em;
+    }
+    label {
+      
+      position: relative;
+      bottom: 5vh;
+    }
+    input[type="submit"] {
+      width: 50vw;
+      position: relative;
+      bottom: 5vh;
+      /* height: 6vh; */
+    }
+    input[type="file"] {
+      padding: 4%;
+      position: relative;
+      bottom: 5vh;
+    }
+    h2{
+      position: relative;
+      bottom: 6vh;
+    }
+    a.button {
+      position: relative;
+      bottom: 5vh;
+    }
+  }
+  
+
+  
+
