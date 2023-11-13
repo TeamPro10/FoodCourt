@@ -74,12 +74,12 @@ document.getElementById("submit").addEventListener("click", function () {
                 PayStatus :PaymentStatus,
                 OrderStatus :"preparing"
             }).then(function () {
-                aleart("Order Placed Sucessfully!!");
+                
                 console.log("Total amount saved successfully.");
             }).catch(function (error) {
                 console.error("Error saving total amount:", error);
             });
-            
+            aleart("Order Placed Sucessfully!!");
             // console.log("token",token);
 
         } else {
