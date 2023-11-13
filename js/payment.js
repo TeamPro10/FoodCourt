@@ -74,12 +74,11 @@ document.getElementById("submit").addEventListener("click", function () {
                 PayStatus :PaymentStatus,
                 OrderStatus :"preparing"
             }).then(function () {
-                
                 console.log("Total amount saved successfully.");
             }).catch(function (error) {
                 console.error("Error saving total amount:", error);
             });
-            aleart("Order Placed Sucessfully!!");
+            
             // console.log("token",token);
 
         } else {
@@ -138,6 +137,7 @@ function addfood_to_uncheckedlist(token, email, time, foodname, quantity, totalA
                 foodCount: foodcount[foodname]
             }).then(() => {
                 console.log("Count saved successfully.");
+                alert("Order Placed Sucessfully!!");
             }).catch(error => {
                 console.error("Error saving Count Details.", error);
             });
