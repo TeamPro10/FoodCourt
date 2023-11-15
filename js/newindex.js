@@ -125,14 +125,14 @@ function displayMenuItems(menuItem, category) {
   // const generalcategory = category;
   // const getcategory = menuItem.FoodType;
   const inputFieldId = `input-${menuItem.foodName}`;
-  if(document.getElementById("veg").style.color==="white"){
+  if (document.getElementById("veg").style.color === "white") {
     // console.log("in");
-    category="veg";
-  }else if(document.getElementById("nonveg").style.color==="white"){
+    category = "veg";
+  } else if (document.getElementById("nonveg").style.color === "white") {
     // console.log("in-non");
-    category="nonveg";
+    category = "nonveg";
   }
-  if (category[1] === menuItem.vegNonVeg||category===menuItem.vegNonVeg) {
+  if (category[1] === menuItem.vegNonVeg || category === menuItem.vegNonVeg) {
     itemDiv.innerHTML = `
     
       ${menuItem.vegNonVeg === "veg"
@@ -153,14 +153,23 @@ function displayMenuItems(menuItem, category) {
         <input type="number" class="input-box" id="${inputFieldId}" value="1" min="1" max="10">
         <button class="plus" onclick="plus('${inputFieldId}')">+</button>
     </div>
-   
-    <button id="add" onclick="add('${menuItem.foodName}',${menuItem.cost},'${inputFieldId}')">Add</button> <br>
-      `;
+    ${menuItem.quantity > 0
+        ? `<button id="add" onclick="add('${menuItem.foodName}', ${menuItem.cost}, '${inputFieldId}')" 
+          ${menuItem.quantity <= 0 ? 'disabled' : ''}>Add</button><br>`
+        : ''
+      }
+`;
+
+    // Apply styling if quantity is less than 1
+    if (menuItem.quantity <= 0) {
+      itemDiv.style.backgroundColor = 'black';
+      itemDiv.style.filter = 'grayscale(100%)'; // Convert to black and white
+    }
 
     // Append the item div to the container
     imagedisplay.appendChild(itemDiv);
 
-  } else if (category[1] === menuItem.vegNonVeg||category===menuItem.vegNonVeg) {
+  } else if (category[1] === menuItem.vegNonVeg || category === menuItem.vegNonVeg) {
     console.log(menuItem.vegNonVeg);
     itemDiv.innerHTML = `
     
@@ -182,9 +191,18 @@ function displayMenuItems(menuItem, category) {
         <input type="number" class="input-box" id="${inputFieldId}" value="1" min="1" max="10">
         <button class="plus" onclick="plus('${inputFieldId}')">+</button>
     </div>
-    
-    <button id="add" onclick="add('${menuItem.foodName}',${menuItem.cost},'${inputFieldId}')">Add</button> <br>
-      `;
+    ${menuItem.quantity > 0
+        ? `<button id="add" onclick="add('${menuItem.foodName}', ${menuItem.cost}, '${inputFieldId}')" 
+          ${menuItem.quantity <= 0 ? 'disabled' : ''}>Add</button><br>`
+        : ''
+      }
+`;
+
+    // Apply styling if quantity is less than 1
+    if (menuItem.quantity <= 0) {
+      itemDiv.style.backgroundColor = 'black';
+      itemDiv.style.filter = 'grayscale(100%)'; // Convert to black and white
+    }
 
     // Append the item div to the container
     imagedisplay.appendChild(itemDiv);
@@ -193,31 +211,35 @@ function displayMenuItems(menuItem, category) {
   else if (category === "Food" || category === "Breakfast" || category === "Meals" || category === "Chats" || category === "Ice-cream"
     || category === "Juice and Milkshakes") {
     itemDiv.innerHTML = `
-    
-    ${menuItem.vegNonVeg === "veg"
-        ? `
-      <img src="../Images/vegetarian.png" alt="no_img"  id="veg-nonveg" width="10vw"><br>
-    `
-        : `
-      <img src="../Images/non-vegetarian.png" alt="no_img"  id="veg-nonveg"><br>
-    `
+      ${menuItem.vegNonVeg === "veg"
+        ? `<img src="../Images/vegetarian.png" alt="no_img" id="veg-nonveg" width="10vw"><br>`
+        : `<img src="../Images/non-vegetarian.png" alt="no_img" id="veg-nonveg"><br>`
       }
-  
-  <h2 id="food-Name">${menuItem.foodName}</h2>
-  <h4 >Rs.<span id="price">${menuItem.cost}</span> </h4>
-  <p id="description">Count:${menuItem.quantity}</p>
-  <span id="qty">Quantity:</span>
-  <div class="quantity">
-      <button class="minus" onclick="minus('${inputFieldId}')">-</button>
-      <input type="number" class="input-box" id="${inputFieldId}" value="1" min="1" max="10">
-      <button class="plus" onclick="plus('${inputFieldId}')">+</button>
-  </div>
-  
-  <button id="add" onclick="add('${menuItem.foodName}',${menuItem.cost},'${inputFieldId}')">Add</button> <br>
-    `;
+      <h2 id="food-Name">${menuItem.foodName}</h2>
+      <h4>Rs.<span id="price">${menuItem.cost}</span></h4>
+      <p id="description">Count:${menuItem.quantity}</p>
+      <span id="qty">Quantity:</span>
+      <div class="quantity">
+          <button class="minus" onclick="minus('${inputFieldId}')">-</button>
+          <input type="number" class="input-box" id="${inputFieldId}" value="1" min="1" max="10">
+          <button class="plus" onclick="plus('${inputFieldId}')">+</button>
+      </div>
+      ${menuItem.quantity > 0
+        ? `<button id="add" onclick="add('${menuItem.foodName}', ${menuItem.cost}, '${inputFieldId}')" 
+            ${menuItem.quantity <= 0 ? 'disabled' : ''}>Add</button><br>`
+        : ''
+      }
+`;
+
+    // Apply styling if quantity is less than 1
+    if (menuItem.quantity <= 0) {
+      itemDiv.style.backgroundColor = 'rgba(118, 117, 117, 0.733)';
+      itemDiv.style.filter = 'grayscale(100%)';
+    }
 
     // Append the item div to the container
     imagedisplay.appendChild(itemDiv);
+
   }
 
   // const buttons = `
@@ -365,43 +387,53 @@ FoodcountRef.orderByChild("foodCount").limitToLast(3).once("value")
       let container = document.querySelector(".content");
       let containerdesktopview = document.querySelector(".food-item-content");
       container.innerHTML = ""; // Clear existing items before displaying new ones
-      containerdesktopview.innerHTML="";
+      containerdesktopview.innerHTML = "";
 
       snapshot.forEach(function (child) {
         child.forEach(function (child2) {
           const menuItem2 = child2.val();
-          const inputFieldId = `input-${menuItem2.foodName}`;
+          const HighestordinputFieldId = `input-${menuItem2.foodName}`;
           // Check if menuItem2.foodName is in the topThreeItems array
           const isTopThree = topThreeItems.some(item => item.foodItem === menuItem2.foodName);
 
-          if (isTopThree && container.style.display!=="none") {
+          if (isTopThree && container.style.display !== "none") {
             const itemDiv = document.createElement("div");
-            
+
             if (getComputedStyle(container).display !== "none") {
               console.log(getComputedStyle(container).display)
               itemDiv.className = "heighest-ordered-food-item";
             } else {
-               itemDiv.className = "food-item2";
+              itemDiv.className = "food-item2";
             }
-              
-        
+
+
             itemDiv.innerHTML = `<h2 id="food-Name">${menuItem2.foodName}</h2>
             <h4 >Rs.<span id="price">${menuItem2.cost}</span> </h4>
             <p id="description">Count:${menuItem2.quantity}</p>
             <span id="qty">Quantity:</span>
             <div class="quantity">
-                <button class="minus" onclick="minus('${inputFieldId}')">-</button>
-                <input type="number" class="input-box" id="${inputFieldId}" value="1" min="1" max="10">
-                <button class="plus" onclick="plus('${inputFieldId}')">+</button>
+                <button class="minus" onclick="minus('${HighestordinputFieldId}')">-</button>
+                <input type="number" class="input-box" id="${HighestordinputFieldId}" value="1" min="1" max="10">
+                <button class="plus" onclick="plus('${HighestordinputFieldId}')">+</button>
             </div>
             
-            <button id="add" onclick="add('${menuItem2.foodName}',${menuItem2.cost},'${inputFieldId}')">Add</button> <br>`;
-        
+            ${menuItem2.quantity > 0
+                ? `<button id="add" onclick="add('${menuItem2.foodName}', ${menuItem2.cost}, '${HighestordinputFieldId}')" 
+                  ${menuItem2.quantity <= 0 ? 'disabled' : ''}>Add</button><br>`
+                : ''
+              }
+      `;
+
+            // Apply styling if quantity is less than 1
+            if (menuItem2.quantity <= 0) {
+              itemDiv.style.backgroundColor = 'rgba(118, 117, 117, 0.733)';
+              itemDiv.style.filter = 'grayscale(100%)';
+            }
             if (getComputedStyle(container).display !== "none") {
-                console.log(getComputedStyle(container).display)
-                container.appendChild(itemDiv);
+              console.log(getComputedStyle(container).display)
+              container.appendChild(itemDiv);
             } else {
-                containerdesktopview.appendChild(itemDiv);
+              containerdesktopview.appendChild(itemDiv);
             }
           }
         });
