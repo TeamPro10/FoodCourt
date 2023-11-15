@@ -1,20 +1,19 @@
-// Reference to the Firebase database
 var database = firebase.database();
 // Reference to the root of your Firebase structure
 let rootRef = database.ref("Orders");
 let chekedItems = database.ref("checkedItems");
 let orderstobeprepared = database.ref("orderstobeprepared");
 // Reference to the table body
-
-
 var tableBody = document.querySelector(".table-unchecked");
-var tablecheched = document.querySelector(".table-checked")
+var tablecheched = document.querySelector(".table-checked");
 var tableBodyOrders = document.querySelector(".table-orders");
 // Dictionary to store counts of food items
 var foodItemCounts = {};
 let timearr = [];
-let username=localStorage.getItem("inputValue");
+let username = localStorage.getItem("inputValue");
 console.log(username);
+
+// Function to display sorted food items
 function displaySortedFoodItems() {
   // Fetch all tokens from Firebase
   rootRef.once("value").then(function (snapshot) {
@@ -26,8 +25,8 @@ function displaySortedFoodItems() {
         tokens.push({
           tokenNumber: tokenNumber,
           time: tokenData.time,
-          amount:tokenData.TotalAmount,
-          gmail:tokenData.Email,
+          amount: tokenData.TotalAmount,
+          gmail: tokenData.Email,
           foodItems: tokenData.foodItem,
         });
       }
@@ -44,7 +43,7 @@ function displaySortedFoodItems() {
         <td>${token.tokenNumber}</td>
         <td>${token.gmail}</td>
         <td>${token.foodItems}</td>
-        <td>${token.time}</td>
+        <td>${formatTime(token.time)}</td>
         <td><button class="confirm-button" onclick="confirm('${token.foodItems}','${token.time}', '${token.tokenNumber}','${token.amount}','${token.gmail}')">Confirm</button></td>
         <td><button class="cancel-button" onclick="cancelling('${token.foodItems}','${token.time}', '${token.tokenNumber}','${token.amount}','${token.gmail}')">Cancel</button></td>
       `;
@@ -52,16 +51,15 @@ function displaySortedFoodItems() {
     });
   });
 
-  
   // Assuming tableBodyOrders is the ID of the table body for checked items
   chekedItems.on("value", function (snapshot) {
     let checkedItem = snapshot.val();
     console.log(checkedItem);
-  
+
     for (let key in checkedItem) {
       if (checkedItem.hasOwnProperty(key)) {
         console.log(checkedItem[key].prepared_status);
-  
+
         var newRow = document.createElement("tr");
         newRow.setAttribute("data-token-number2", key);
         newRow.innerHTML = `
@@ -69,22 +67,24 @@ function displaySortedFoodItems() {
           <td>${checkedItem[key].gmail}</td>
           <td>${key}</td>
           <td>${checkedItem[key].foodItem}</td>
-          <td>${checkedItem[key].time}</td>
+          <td>${formatTime(checkedItem[key].time)}</td>
           <td>${checkedItem[key].amount}</td>
           <td>${checkedItem[key].prepared_status}</td>
         `;
-        
+
         var allRows = tablecheched.querySelectorAll("tr[data-token-number2]");
         newRow.querySelector("td:first-child").textContent = allRows.length + 1;
         tablecheched.appendChild(newRow);
-  
-        
       }
     }
   });
-  
 }
 
+// Function to format time to 12-hour format
+function formatTime(time) {
+  var formattedTime = new Date("2000-01-01 " + time).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
+  return formattedTime;
+}
 
 // Call the function to display food items in sorted order
 displaySortedFoodItems();
@@ -190,8 +190,6 @@ home.addEventListener("click", function () {
 
 
 function downloadpdf() {
-  let chekedItems = database.ref("checkedItems");
-
   chekedItems.once('value')
     .then(snapshot => {
       const data = [];
@@ -215,20 +213,47 @@ function downloadpdf() {
       // Save the workbook to a file
       XLSX.writeFile(workbook, 'checked_orders'+'.xlsx');
 
-      chekedItems.remove()
-      .then(function () {
-       console.log('Token deleted successfully from unchecked');
-    })
-   .catch(function (error) {
-    console.error('Error deleting token from unchecked:', error);
-    });
-
+      // Clear the entries from the frontend (remove rows from the table)
+      var tableRows = document.querySelectorAll(".table-checked tbody tr");
+      tableRows.forEach(row => row.remove());
     })
     .catch(err => {
       console.error('Error getting data from Firebase:', err);
       // Handle the error here (e.g., display an error message to the user)
     });
 }
+
+function clearData() {
+  // Display a SweetAlert confirmation dialog
+  Swal.fire({
+    title: 'Are you sure?',
+    text: 'This will clear all entries. This action cannot be undone!',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, clear it!',
+    cancelButtonText: 'Cancel',
+  }).then((result) => {
+    if (result.isConfirmed) {
+      // Clear the entries in the Firebase database
+      chekedItems.remove()
+        .then(function () {
+          console.log('Entries cleared successfully from checkedItems');
+        })
+        .catch(function (error) {
+          console.error('Error clearing entries from checkedItems:', error);
+        });
+
+      // Clear the entries from the frontend (remove rows from the table)
+      var tableRows = document.querySelectorAll(".table-checked tbody tr");
+      tableRows.forEach(row => row.remove());
+
+      Swal.fire('Cleared!', 'All entries have been cleared.', 'success');
+    } else {
+      Swal.fire('Cancelled', 'Entries were not cleared.', 'info');
+    }
+  });
+}
+
 
 //logout
 document.querySelector(".logout-button").addEventListener("click", function () {
