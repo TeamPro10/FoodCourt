@@ -39,9 +39,9 @@
 }
 
 .innercontainer nav {
-    position: absolute;
+    position: fixed;
     top: 0;
-    z-index: 1;
+    z-index: 999;
     /* left: 10px; */
     height: 5%;
     width: 98.8%;
@@ -264,6 +264,9 @@
 #logo2 {
     display: none;
 }
+#cart {
+    display: none;
+}
 
 #lgospn {
     display: none;
@@ -300,9 +303,10 @@
     flex-direction: column;
 }
 
-.menu ul li {
+.fooditem-list ,.veg-nonveg {
     border: 1px solid rgb(26, 65, 81);
     color: rgb(26, 65, 81);
+    width: 100%;
     border-radius: 10px;
     margin-top: 5px;
     display: flex;
@@ -591,9 +595,10 @@
     }
 
     .nav {
+        z-index: 3;
         height: 8vh;
         width: 100%;
-        position: absolute;
+        position: fixed;
         top: 0;
         background-color: white;
     }
@@ -605,14 +610,16 @@
     .innercontainer .nav1 {
         display: flex;
         flex-direction: column;
+
         justify-content: space-around;
         position: absolute;
         top: 0px;
         left: 0px;
+        background-color: white;
         /* border-radius: 100%; */
         height: 100vh;
         width: 70vw;
-        z-index: 1;
+        z-index: 9;
         transform: translateX(-380px);
         transition: transform 0.5s ease-in-out;
 
@@ -627,6 +634,7 @@
 
     .innercontainer2 h1 {
         /* font-size: 80px; */
+        z-index: 1;
         font-size: 4.5em;
         position: relative;
         /* left: 10%; */
@@ -684,10 +692,10 @@
 
     #bar {
         display: block;
-        position: relative;
-        bottom: 30px;
+        position: fixed;
+        top: 0px;
         /* background-color: rgb(39, 40, 41); */
-        background-color: transparent;
+        background-color: white;
         border: 2.4px solid rgb(109, 107, 107);
         width: 5vw;
         height: 2.3vh;
@@ -695,7 +703,7 @@
         border-radius: 3px;
         margin: 14px;
         cursor: pointer;
-        z-index: 2;
+        z-index: 4;
         transition: .3s ease;
     }
 
@@ -749,10 +757,10 @@
         display: block;
         height: 32px;
         width: 30px;
-        position: relative;
+        position: fixed;
         left: 4vw;
         top: 2.5vh;
-        z-index: 3;
+        z-index: 5;
         cursor: pointer;
 
 
@@ -792,7 +800,14 @@
         display: block;
         position: relative;
         left: 88%;
-        top: 19%;
+        bottom: 6%;
+    }
+
+    #cart {
+        display: block;
+        position: relative;
+        left: 58%;
+        top: 39%;
     }
 
     #lgospn {
@@ -800,7 +815,7 @@
         margin-right: 70%;
         position: relative;
         left: 69%;
-        bottom: 28%;
+        bottom: 48%;
     }
 
     /* **********************************content**************************************** */
@@ -821,6 +836,18 @@
         border-radius: 10px;
         display: grid;
         grid-template-columns: auto;
+    }
+
+    #cart-sts{
+        display: none;
+        position: absolute;
+        top: 23px;
+
+        left: 63%;
+        /* z-index: 6; */
+        border-radius: 100%;
+        width: 3.5%;
+        height: 22%;
     }
 
     .food-item {
@@ -912,6 +939,7 @@
     .food hr {
         position: relative;
         right: 15%;
+        /* background-color: rgba(118, 117, 117, 0.733); */
         width: 120%;
     }
     .notification {
