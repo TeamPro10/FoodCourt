@@ -57,11 +57,11 @@ function toggleCategory(cat, clickedElement) {
     }
   }
 }
-const menuRef = firebase.database().ref("foodItems2");
 
+const menuRef = firebase.database().ref("foodItems2");
 // Initial loading of items
 menuRef.on("value", function (snapshot) {
-
+  
   document.getElementById('Food').style.background = " rgb(26, 65, 81)";
   document.getElementById('Food').style.color = " white";
   clearpresentitems(); // Clear existing items before displaying new ones
@@ -73,6 +73,33 @@ menuRef.on("value", function (snapshot) {
     });
   });
 });
+
+
+let categoryList = document.getElementById("menu-list");
+
+menuRef.on("value", function(snapshot) {
+  let data = snapshot.val();
+
+  // Clear existing content
+  // categoryList.innerHTML = "";
+
+  for (let categoryName in data) {
+    if (data.hasOwnProperty(categoryName)) {
+      let li = document.createElement("li");
+      li.className = "fooditem-list";
+      li.id = categoryName;
+      li.textContent = categoryName;
+      console.log("name:",categoryName);
+      // Attach the click event handler
+      li.onclick = function() {
+        category(categoryName, li.id);
+      };
+
+      categoryList.appendChild(li);
+    }
+  }
+});
+
 
 function category(category, clickedElement) {
   // console.log(category);
@@ -116,23 +143,31 @@ function category(category, clickedElement) {
 
 function displayMenuItems(menuItem, category) {
   const imagedisplay = document.getElementById("fooditems-display");
-  const Foodcategory = document.getElementById("Veg");
+  // const Foodcategory = document.getElementById("Veg");
   // console.log("imagedisplay:", menuItem.foodName);
   // Create a new item div
+
+  
+
   const itemDiv = document.createElement("div");
   itemDiv.className = "food-item";
-  // console.log(category[1]);
+  
   // const generalcategory = category;
   // const getcategory = menuItem.FoodType;
-  const inputFieldId = `input-${menuItem.foodName}`;
+  const uniqueInputId = generateUniqueInputId(menuItem.foodName);
+
+  
+  let Cat;
   if (document.getElementById("veg").style.color === "white") {
     // console.log("in");
-    category = "veg";
+    Cat = "veg";
   } else if (document.getElementById("nonveg").style.color === "white") {
     // console.log("in-non");
-    category = "nonveg";
+    Cat = "nonveg";
+    
   }
-  if (category[1] === menuItem.vegNonVeg || category === menuItem.vegNonVeg) {
+  // console.log(Cat);
+  if (Cat === menuItem.vegNonVeg ) {
     itemDiv.innerHTML = `
     
       ${menuItem.vegNonVeg === "veg"
@@ -149,12 +184,12 @@ function displayMenuItems(menuItem, category) {
     <p id="description">Count:${menuItem.quantity}</p>
     <span id="qty">Quantity:</span>
     <div class="quantity">
-        <button class="minus" onclick="minus('${inputFieldId}')">-</button>
-        <input type="number" class="input-box" id="${inputFieldId}" value="1" min="1" max="10">
-        <button class="plus" onclick="plus('${inputFieldId}')">+</button>
+        <button class="minus" onclick="minus('${uniqueInputId}')">-</button>
+        <input type="number" class="input-box" id="${uniqueInputId}" value="1" min="1" max="10">
+        <button class="plus" onclick="plus('${uniqueInputId}')">+</button>
     </div>
     ${menuItem.quantity > 0
-        ? `<button id="add" onclick="add('${menuItem.foodName}', ${menuItem.cost}, '${inputFieldId}')" 
+        ? `<button id="add" onclick="add('${menuItem.foodName}', ${menuItem.cost}, '${uniqueInputId}')" 
           ${menuItem.quantity <= 0 ? 'disabled' : ''}>Add</button><br>`
         : ''
       }
@@ -162,14 +197,14 @@ function displayMenuItems(menuItem, category) {
 
     // Apply styling if quantity is less than 1
     if (menuItem.quantity <= 0) {
-      itemDiv.style.backgroundColor = 'black';
+      itemDiv.style.backgroundColor = 'rgba(118, 117, 117, 0.733)';
       itemDiv.style.filter = 'grayscale(100%)'; // Convert to black and white
     }
 
     // Append the item div to the container
     imagedisplay.appendChild(itemDiv);
 
-  } else if (category[1] === menuItem.vegNonVeg || category === menuItem.vegNonVeg) {
+  } else if (Cat === menuItem.vegNonVeg ) {
     console.log(menuItem.vegNonVeg);
     itemDiv.innerHTML = `
     
@@ -187,12 +222,12 @@ function displayMenuItems(menuItem, category) {
     <p id="description">Count:${menuItem.quantity}</p>
     <span id="qty">Quantity:</span>
     <div class="quantity">
-        <button class="minus" onclick="minus('${inputFieldId}')">-</button>
-        <input type="number" class="input-box" id="${inputFieldId}" value="1" min="1" max="10">
-        <button class="plus" onclick="plus('${inputFieldId}')">+</button>
+        <button class="minus" onclick="minus('${uniqueInputId}')">-</button>
+        <input type="number" class="input-box" id="${uniqueInputId}" value="1" min="1" max="10">
+        <button class="plus" onclick="plus('${uniqueInputId}')">+</button>
     </div>
     ${menuItem.quantity > 0
-        ? `<button id="add" onclick="add('${menuItem.foodName}', ${menuItem.cost}, '${inputFieldId}')" 
+        ? `<button id="add" onclick="add('${menuItem.foodName}', ${menuItem.cost}, '${uniqueInputId}')" 
           ${menuItem.quantity <= 0 ? 'disabled' : ''}>Add</button><br>`
         : ''
       }
@@ -200,7 +235,7 @@ function displayMenuItems(menuItem, category) {
 
     // Apply styling if quantity is less than 1
     if (menuItem.quantity <= 0) {
-      itemDiv.style.backgroundColor = 'black';
+      itemDiv.style.backgroundColor = 'rgba(118, 117, 117, 0.733)';
       itemDiv.style.filter = 'grayscale(100%)'; // Convert to black and white
     }
 
@@ -208,8 +243,7 @@ function displayMenuItems(menuItem, category) {
     imagedisplay.appendChild(itemDiv);
 
   }
-  else if (category === "Food" || category === "Breakfast" || category === "Meals" || category === "Chats" || category === "Ice-cream"
-    || category === "Juice and Milkshakes") {
+  else if (category === "Food" || Cat === undefined) {
     itemDiv.innerHTML = `
       ${menuItem.vegNonVeg === "veg"
         ? `<img src="../Images/vegetarian.png" alt="no_img" id="veg-nonveg" width="10vw"><br>`
@@ -220,12 +254,12 @@ function displayMenuItems(menuItem, category) {
       <p id="description">Count:${menuItem.quantity}</p>
       <span id="qty">Quantity:</span>
       <div class="quantity">
-          <button class="minus" onclick="minus('${inputFieldId}')">-</button>
-          <input type="number" class="input-box" id="${inputFieldId}" value="1" min="1" max="10">
-          <button class="plus" onclick="plus('${inputFieldId}')">+</button>
+          <button class="minus" onclick="minus('${uniqueInputId}')">-</button>
+          <input type="number" class="input-box" id="${uniqueInputId}" value="1" min="1" max="10">
+          <button class="plus" onclick="plus('${uniqueInputId}')">+</button>
       </div>
       ${menuItem.quantity > 0
-        ? `<button id="add" onclick="add('${menuItem.foodName}', ${menuItem.cost}, '${inputFieldId}')" 
+        ? `<button id="add" onclick="add('${menuItem.foodName}', ${menuItem.cost}, '${uniqueInputId}')" 
             ${menuItem.quantity <= 0 ? 'disabled' : ''}>Add</button><br>`
         : ''
       }
@@ -260,10 +294,13 @@ function displayMenuItems(menuItem, category) {
 function clearpresentitems() {
   const imagedisplay = document.getElementById("fooditems-display");
   imagedisplay.innerHTML = "";
+
+  // let menuList = document.getElementById("menu-list");
+  // menuList.innerHTML = "";
 }
 
-function minus(inputFieldId) {
-  const inputField = document.getElementById(inputFieldId);
+function minus(uniqueInputId) {
+  const inputField = document.getElementById(uniqueInputId);
   let value = parseInt(inputField.value);
   if (value > 1) {
     value--;
@@ -271,8 +308,8 @@ function minus(inputFieldId) {
   }
 }
 
-function plus(inputFieldId) {
-  const inputField = document.getElementById(inputFieldId);
+function plus(uniqueInputId) {
+  const inputField = document.getElementById(uniqueInputId);
   let value = parseInt(inputField.value);
   if (value < 10) {
     value++;
@@ -296,9 +333,9 @@ function redirectToCheckoutPage() {
   }
 }
 
-function add(foodName, cost, inputFieldId) {
+function add(foodName, cost, uniqueInputId) {
   var cart = JSON.parse(localStorage.getItem("cart")) || [];
-  var selectElement = document.getElementById(inputFieldId);
+  var selectElement = document.getElementById(uniqueInputId);
   var qnty = parseInt(selectElement.value);
 
   if (!isNaN(cost)) {
@@ -309,12 +346,25 @@ function add(foodName, cost, inputFieldId) {
 
     });
     console.log(foodName, cost, qnty);
+    document.getElementById("cart-sts").style.display="block";
     notification(foodName + " added to Cart");
     localStorage.setItem("cart", JSON.stringify(cart));
   } else {
     console.error("Cost is NaN. Cannot set the order.");
   }
 }
+
+var cart = JSON.parse(localStorage.getItem("cart")) ;
+if(cart.length > 0){
+  document.getElementById("cart-sts").style.display="block";
+
+}
+
+document.getElementById("cart").addEventListener("click", function(){
+    
+    window.location.href="../Html/Order.html"
+})
+
 
 function notification(foodName) {
   const notification = document.getElementById("notification");
@@ -381,9 +431,9 @@ FoodcountRef.orderByChild("foodCount").limitToLast(3).once("value")
     });
 
     console.log(topThreeItems);
-
+    const menuRef2 = firebase.database().ref("foodItems2");
     // Now fetch the menu items and display the top three
-    menuRef.on("value", function (snapshot) {
+    menuRef2.on("value", function (snapshot) {
       let container = document.querySelector(".content");
       let containerdesktopview = document.querySelector(".food-item-content");
       container.innerHTML = ""; // Clear existing items before displaying new ones
@@ -392,7 +442,8 @@ FoodcountRef.orderByChild("foodCount").limitToLast(3).once("value")
       snapshot.forEach(function (child) {
         child.forEach(function (child2) {
           const menuItem2 = child2.val();
-          const HighestordinputFieldId = `input-${menuItem2.foodName}`;
+          const uniqueInputId = generateUniqueInputId(menuItem2.foodName);
+          console.log( uniqueInputId );
           // Check if menuItem2.foodName is in the topThreeItems array
           const isTopThree = topThreeItems.some(item => item.foodItem === menuItem2.foodName);
 
@@ -412,13 +463,13 @@ FoodcountRef.orderByChild("foodCount").limitToLast(3).once("value")
             <p id="description">Count:${menuItem2.quantity}</p>
             <span id="qty">Quantity:</span>
             <div class="quantity">
-                <button class="minus" onclick="minus('${HighestordinputFieldId}')">-</button>
-                <input type="number" class="input-box" id="${HighestordinputFieldId}" value="1" min="1" max="10">
-                <button class="plus" onclick="plus('${HighestordinputFieldId}')">+</button>
+                <button class="minus" onclick="minus('${uniqueInputId}')">-</button>
+                <input type="number" class="input-box" id="${uniqueInputId}" value="1" min="1" max="10">
+                <button class="plus" onclick="plus('${uniqueInputId}')">+</button>
             </div>
             
             ${menuItem2.quantity > 0
-                ? `<button id="add" onclick="add('${menuItem2.foodName}', ${menuItem2.cost}, '${HighestordinputFieldId}')" 
+                ? `<button id="add" onclick="add('${menuItem2.foodName}', ${menuItem2.cost}, '${uniqueInputId}')" 
                   ${menuItem2.quantity <= 0 ? 'disabled' : ''}>Add</button><br>`
                 : ''
               }
@@ -448,3 +499,12 @@ FoodcountRef.orderByChild("foodCount").limitToLast(3).once("value")
   .catch(error => {
     console.error("Error fetching top three food items:", error);
   });
+
+  // Function to generate a unique input field ID
+function generateUniqueInputId(foodName) {
+  const uniqueId = Math.random().toString(36).substr(2, 9);
+  return `input-${uniqueId}-${foodName}`;
+}
+
+
+
