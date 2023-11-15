@@ -14,14 +14,14 @@ function renderFoodItems() {
     foodItemsRef.once('value', (snapshot) => {
         snapshot.forEach((categorySnapshot) => {
             const category = categorySnapshot.key;
-            const categoryList = document.createElement('div');
-            categoryList.className = 'category';
-            categoryList.innerHTML = `
-                <h2>${category}</h2>
-                <ul id="${category.toLowerCase()}-list"></ul>
-            `;
 
-            menuContainer.appendChild(categoryList);
+            const categoryHeader = document.createElement('h2');
+            categoryHeader.textContent = category;
+            menuContainer.appendChild(categoryHeader);
+
+            const categoryListElement = document.createElement('ul');
+            categoryListElement.id = `${category.toLowerCase()}-list`;
+            menuContainer.appendChild(categoryListElement);
 
             categorySnapshot.forEach((itemSnapshot) => {
                 const foodItem = itemSnapshot.val();
@@ -30,51 +30,20 @@ function renderFoodItems() {
                 listItem.innerHTML = `
                     ${foodItem.foodName}
                     <div class="quantity">
-                        <button class="minus" onclick="decrement('${category}', '${itemSnapshot.key}')">-</button>
-                        <span class="quantity-value">${foodItem.quantity}</span>
-                        <button class="plus" onclick="increment('${category}', '${itemSnapshot.key}')">+</button>
-                        <button class="cancel" onclick="cancel('${category}', '${itemSnapshot.key}')">Cancel</button>
+                        <input type="number" id="${itemSnapshot.key}-quantity" value="${foodItem.quantity}" onchange="updateQuantity('${category}', '${itemSnapshot.key}', this.value)">
                     </div>
                 `;
 
-                const categoryListElement = document.getElementById(`${category.toLowerCase()}-list`);
                 categoryListElement.appendChild(listItem);
             });
         });
     });
 }
 
-// Function to increment quantity for a specific item
-function increment(category, itemId) {
-    const foodItemRef = database.ref(`foodItems/${category}/${itemId}`);
-    foodItemRef.transaction((foodItem) => {
-        if (foodItem) {
-            foodItem.quantity++;
-        }
-        return foodItem;
-    });
-}
-
-// Function to decrement quantity for a specific item
-function decrement(category, itemId) {
-    const foodItemRef = database.ref(`foodItems/${category}/${itemId}`);
-    foodItemRef.transaction((foodItem) => {
-        if (foodItem && foodItem.quantity > 1) {
-            foodItem.quantity--;
-        }
-        return foodItem;
-    });
-}
-
-// Function to reset quantity to zero for a specific item
-function cancel(category, itemId) {
-    const foodItemRef = database.ref(`foodItems/${category}/${itemId}`);
-    foodItemRef.transaction((foodItem) => {
-        if (foodItem) {
-            foodItem.quantity = 0;
-        }
-        return foodItem;
-    });
+// Function to update quantity for a specific item
+function updateQuantity(category, itemId, newQuantity) {
+    const foodItemRef = database.ref(`foodItems2/${category}/${itemId}`);
+    foodItemRef.update({ quantity: parseInt(newQuantity) });
 }
 
 // Function to reset form fields
@@ -83,7 +52,7 @@ function resetFormFields() {
     document.getElementById('dish-price').value = '';
     document.getElementById('dish-quantity').value = '';
     document.getElementById('dish-category').value = ''; // Reset dropdown
-    document.getElementById('dish-vegnonveg').value='';
+    document.getElementById('dish-vegnonveg').value = '';
     customCategoryInput.style.display = 'none';
     customCategoryInput.querySelector('input').required = false;
 }
@@ -92,6 +61,7 @@ function resetFormFields() {
 function saveDishToDatabase(newDish) {
     const foodItemsRef = database.ref(`foodItems2/${newDish.FoodType}`);
     foodItemsRef.push(newDish);
+    refreshPage();
 
     // After successfully adding the item to the database, reset form fields
     resetFormFields();
@@ -106,7 +76,7 @@ function populateCategoryDropdown(dropdownId) {
     dropdown.innerHTML = '';
 
     // Fetch categories from the 'foodItems' node in Firebase
-    const foodItemsRef = database.ref('foodItems');
+    const foodItemsRef = database.ref('foodItems2');
 
     foodItemsRef.once('value', (snapshot) => {
         snapshot.forEach((categorySnapshot) => {
@@ -157,10 +127,10 @@ removeItemCategoryDropdown.addEventListener('change', () => {
     itemDropdown.disabled = false;
 
     // Fetch items for the selected category from the database
-    const itemsRef = database.ref(`foodItems/${selectedCategory}`);
+    const itemsRef = database.ref(`foodItems2/${selectedCategory}`);
     itemsRef.once('value', (snapshot) => {
         snapshot.forEach((itemSnapshot) => {
-            const itemName = itemSnapshot.child('name').val(); // Get the 'name' property
+            const itemName = itemSnapshot.child('foodName').val(); // Get the 'name' property
             const option = document.createElement('option');
             option.value = itemName;
             option.textContent = itemName;
@@ -168,7 +138,6 @@ removeItemCategoryDropdown.addEventListener('change', () => {
         });
     });
 });
-
 
 // Event listener for remove button click
 const removeButton = document.getElementById('remove-button');
@@ -181,22 +150,32 @@ removeButton.addEventListener('click', () => {
 
         console.log('Removing item:', selectedItem);
 
-        // Remove the selected item from Firebase here
-        const itemRef = database.ref(`foodItems/${selectedCategory}/${selectedItem}`);
-        itemRef.remove().then(() => {
-            console.log('Item removed successfully');
-            // Refresh the page
-            location.reload();
-        }).catch(error => {
-            console.error('Error removing item:', error);
-        });
+        const itemRef = database.ref(`foodItems2/${selectedCategory}`);
+        // Assuming 'itemname' is the key you want to match
+        itemRef.orderByChild('foodName').equalTo(selectedItem).once('value')
+            .then(snapshot => {
+                snapshot.forEach(childSnapshot => {
+                    // Remove the item with the specified itemname
+                    childSnapshot.ref.remove().then(() => {
+                        alert('Item removed successfully');
+                        // Refresh the page if needed
+                        location.reload();
+                    }).catch(error => {
+                        console.error('Error removing item:', error);
+                    });
+                });
+            })
+            .catch(error => {
+                console.error('Error querying database:', error);
+            });
+
     } else if (selectedOption === 'remove-category') {
         const selectedCategory = document.getElementById('remove-category-name').value;
 
         console.log('Removing category:', selectedCategory);
 
         // Remove the selected category from Firebase here
-        const categoryRef = database.ref(`foodItems/${selectedCategory}`);
+        const categoryRef = database.ref(`foodItems2/${selectedCategory}`);
         categoryRef.remove().then(() => {
             console.log('Category removed successfully');
             // Refresh the page
@@ -206,7 +185,6 @@ removeButton.addEventListener('click', () => {
         });
     }
 });
-
 
 document.addEventListener('DOMContentLoaded', function () {
     const addDishForm = document.getElementById('add-dish-form');
@@ -231,16 +209,15 @@ document.addEventListener('DOMContentLoaded', function () {
         const dishPrice = document.getElementById('dish-price').value;
         const dishQuantity = document.getElementById('dish-quantity').value;
         const dishCategory = dishCategoryDropdown.value;
-        const dishvegnonveg=document.getElementById('dish-vegnonveg').value;
+        const dishvegnonveg = document.getElementById('dish-vegnonveg').value;
         const customCategory = customCategoryInput.querySelector('input').value;
 
         // Create a new dish object with the entered details
         const newDish = {
-            
-            cost:parseInt(dishPrice),
-            foodName:dishName,
-            vegNonVeg:dishvegnonveg,
-            quantity: parseInt(dishQuantity), 
+            cost: parseInt(dishPrice),
+            foodName: dishName,
+            vegNonVeg: dishvegnonveg,
+            quantity: parseInt(dishQuantity),
         };
 
         // Check if a custom category is entered
@@ -248,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Use the custom category
             newDish.FoodType = customCategory.trim();
         } else {
-            newDish.FoodType  = dishCategory;
+            newDish.FoodType = dishCategory;
         }
 
         // Push the new dish data to the Firebase database under the respective category
@@ -264,7 +241,7 @@ function refreshPage() {
 window.onload = () => {
     renderFoodItems();
     populateCategoryDropdown('dish-category');
-}
+};
 
 // Reset Token
 
@@ -274,10 +251,10 @@ document.getElementById("reset_token").addEventListener("click", function () {
         tokenref.set({
             token: 1,
         });
-        console.log("Reset Successful") 
+        console.log("Reset Successful")
     } catch (error) {
-        console.error("Reset Unsucessfull!"+error)
+        console.error("Reset Unsucessfull!" + error)
     }
-    
+
 
 });
