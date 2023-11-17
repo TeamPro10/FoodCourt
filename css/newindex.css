@@ -837,17 +837,26 @@
         display: grid;
         grid-template-columns: auto;
     }
-
+    #count{
+        /* padding: 1px; */
+        position: relative;
+        left: 5px;
+        z-index: 7;
+        font-size: 12px;
+        font-weight: bold;
+    }
     #cart-sts{
+       
+       
         display: none;
         position: absolute;
-        top: 23px;
+        top: 22px;
 
-        left: 63%;
+        left: 62.5%;
         /* z-index: 6; */
         border-radius: 100%;
         width: 3.5%;
-        height: 22%;
+        height: 25%;
     }
 
     .food-item {
