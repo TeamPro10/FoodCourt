@@ -40,22 +40,23 @@ function displayCartItems() {
         };
       }
     });
-
+   
     // Loop through the itemQuantities object and display consolidated items
     for (var itemName in itemQuantities) {
       var itemData = itemQuantities[itemName];
       var listItem = document.createElement("li");
-
+      
       listItem.innerHTML = `<h3>${itemName} (Qty: ${itemData.quantity})</h3>
                                       <p>Rs. ${itemData.totalPrice.toFixed(
         2
       )}</p>
-                                      <button class="cancel-item" onclick="removeItem('${itemName}')">cancel</button>`;
+      <button class="cancel-item" onclick="removeItem('${itemName}')">cancel</button>`;
       cartList.appendChild(listItem);
 
       totalAmount += itemData.totalPrice; // Update the total amount
+      
     }
-
+    
     // Update the total amount
     var totalAmountSpan = document.querySelector(".cart span");
     totalAmountSpan.textContent = "Total amt: Rs. " + totalAmount.toFixed(2);
@@ -71,14 +72,18 @@ function displayCartItems() {
 }
 
 function removeItem(itemName) {
+  var count=  parseInt(JSON.parse(localStorage.getItem("fooditemcount")));
+  count=count-1;
   var cart = JSON.parse(localStorage.getItem("cart"));
   cart = cart.filter((item) => item.name !== itemName);
   localStorage.setItem("cart", JSON.stringify(cart));
+  localStorage.setItem("fooditemcount", JSON.stringify(count));
   displayCartItems();
 }
 
 // Function to clear the cart and refresh the page
 function clearCart() {
+  localStorage.removeItem("fooditemcount")
   // Clear items from local storage
   localStorage.removeItem("cart");
 
