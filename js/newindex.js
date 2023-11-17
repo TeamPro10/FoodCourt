@@ -333,17 +333,19 @@ function redirectToCheckoutPage() {
   }
 }
 
+let fooditemcount = JSON.parse(localStorage.getItem("fooditemcount"))|| [];
 
-let fooditemcount = [];
-let count = 0;
+// let count = 0;
 
 // Function to update the display count
 function updateCountDisplay() {
-  const storedCount = parseInt(JSON.parse(localStorage.getItem("fooditemcount")));
-  if(storedCount > 0) {
+  const storedCount = JSON.parse(localStorage.getItem("fooditemcount"));
+  if(storedCount.length > 0 && storedCount!=null) {
     document.getElementById("cart-sts").style.display = "block";
-    document.getElementById("count").textContent =  storedCount ;
+    document.getElementById("count").textContent =  storedCount.length ;
     document.getElementById("count").style.color = "white";
+  }else{
+    console.log("empty")
   }
  
 }
@@ -376,10 +378,10 @@ function add(foodName, cost, uniqueInputId) {
   if (!fooditemcount.includes(foodName)) {
     console.log("in")
     fooditemcount.push(foodName);
-    count = count + 1;
-    console.log(count);
-    localStorage.setItem("fooditemcount", JSON.stringify(count));
-    // updateCountDisplay(); // Update the display count
+    // count = count + 1;
+    console.log(fooditemcount);
+    localStorage.setItem("fooditemcount", JSON.stringify(fooditemcount));
+    updateCountDisplay(); // Update the display count
   }else{
     console.log("not in")
   }
@@ -402,12 +404,13 @@ function add(foodName, cost, uniqueInputId) {
     console.error("Cost is NaN. Cannot set the order.");
   }
 }
-
-var cart = JSON.parse(localStorage.getItem("fooditemcount")) || [];
-console.log(cart);
+// const storedCount = JSON.parse(localStorage.getItem("fooditemcount"));
+// console.log(fooditemcount);
+// var cart = JSON.parse(localStorage.getItem("fooditemcount")) || [];
+// console.log(cart.length);
 
 // Update the display count when the page loads
-updateCountDisplay();
+// updateCountDisplay();
 
 document.getElementById("cart").addEventListener("click", function () {
   window.location.href = "../Html/Order.html";
