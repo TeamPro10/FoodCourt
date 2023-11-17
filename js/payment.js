@@ -58,7 +58,7 @@ document.getElementById("submit").addEventListener("click", function () {
                 }).then(function (docRef) {
                     addfood_to_uncheckedlist(token, username, time, item.name, item.quantity, item.quantity * item.price)
                     console.log("Order details saved successfully with ID: ", docRef.id);
-                    localStorage.removeItem('cart');
+                    localStorage.removeItem("cart");
                     localStorage.removeItem("time");
                 }).catch(function (error) {
                     console.error("Error saving order details:", error);
