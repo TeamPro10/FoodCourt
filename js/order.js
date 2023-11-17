@@ -72,10 +72,12 @@ function displayCartItems() {
 }
 
 function removeItem(itemName) {
-  var count=  parseInt(JSON.parse(localStorage.getItem("fooditemcount")));
-  count=count-1;
+  var count=  JSON.parse(localStorage.getItem("fooditemcount"));
+  count=  count.filter((item) => item !== itemName);
+  console.log(count);
   var cart = JSON.parse(localStorage.getItem("cart"));
   cart = cart.filter((item) => item.name !== itemName);
+  console.log(cart);
   localStorage.setItem("cart", JSON.stringify(cart));
   localStorage.setItem("fooditemcount", JSON.stringify(count));
   displayCartItems();
