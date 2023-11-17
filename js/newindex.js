@@ -1,3 +1,4 @@
+
 document.addEventListener("click", function (event) {
   var checkbox = document.getElementById("checkbox");
   if (event.target !== checkbox) {
@@ -89,7 +90,7 @@ menuRef.on("value", function(snapshot) {
       li.className = "fooditem-list";
       li.id = categoryName;
       li.textContent = categoryName;
-      console.log("name:",categoryName);
+      // console.log("name:",categoryName);
       // Attach the click event handler
       li.onclick = function() {
         category(categoryName, li.id);
@@ -295,8 +296,7 @@ function clearpresentitems() {
   const imagedisplay = document.getElementById("fooditems-display");
   imagedisplay.innerHTML = "";
 
-  // let menuList = document.getElementById("menu-list");
-  // menuList.innerHTML = "";
+  
 }
 
 function minus(uniqueInputId) {
@@ -333,9 +333,56 @@ function redirectToCheckoutPage() {
   }
 }
 
+
+let fooditemcount = [];
+let count = 0;
+
+// Function to update the display count
+function updateCountDisplay() {
+  const storedCount = parseInt(JSON.parse(localStorage.getItem("fooditemcount")));
+  if(storedCount > 0) {
+    document.getElementById("cart-sts").style.display = "block";
+    document.getElementById("count").textContent =  storedCount ;
+    document.getElementById("count").style.color = "white";
+  }
+ 
+}
+
+// // Function to initialize count from localStorage
+// function initializeCountFromLocalStorage() {
+//   const storedCount = JSON.parse(localStorage.getItem("fooditemcount"));
+//   if (storedCount !== null) {
+//     count = storedCount;
+//     updateCountDisplay();
+//   }
+// }
+
+// // Call the initialization function when the page loads
+// window.onload = initializeCountFromLocalStorage;
+
+// // Update the display count when the page loads
+updateCountDisplay();
+
+
 function add(foodName, cost, uniqueInputId) {
   var cart = JSON.parse(localStorage.getItem("cart")) || [];
   var selectElement = document.getElementById(uniqueInputId);
+
+  // Check if the element with the specified ID exists
+  if (!selectElement) {
+    console.error("Invalid element ID: " + uniqueInputId);
+    return;
+  }
+  if (!fooditemcount.includes(foodName)) {
+    console.log("in")
+    fooditemcount.push(foodName);
+    count = count + 1;
+    console.log(count);
+    localStorage.setItem("fooditemcount", JSON.stringify(count));
+    // updateCountDisplay(); // Update the display count
+  }else{
+    console.log("not in")
+  }
   var qnty = parseInt(selectElement.value);
 
   if (!isNaN(cost)) {
@@ -343,10 +390,12 @@ function add(foodName, cost, uniqueInputId) {
       name: foodName,
       price: cost,
       quantity: qnty,
-
     });
-    console.log(foodName, cost, qnty);
-    document.getElementById("cart-sts").style.display="block";
+
+    
+
+    // console.log(foodName, cost, qnty);
+    document.getElementById("cart-sts").style.display = "block";
     notification(foodName + " added to Cart");
     localStorage.setItem("cart", JSON.stringify(cart));
   } else {
@@ -354,16 +403,17 @@ function add(foodName, cost, uniqueInputId) {
   }
 }
 
-var cart = JSON.parse(localStorage.getItem("cart")) ;
-if(cart.length > 0){
-  document.getElementById("cart-sts").style.display="block";
+var cart = JSON.parse(localStorage.getItem("fooditemcount")) || [];
+console.log(cart);
 
-}
+// Update the display count when the page loads
+updateCountDisplay();
 
-document.getElementById("cart").addEventListener("click", function(){
-    
-    window.location.href="../Html/Order.html"
-})
+document.getElementById("cart").addEventListener("click", function () {
+  window.location.href = "../Html/Order.html";
+});
+
+
 
 
 function notification(foodName) {
@@ -430,7 +480,7 @@ FoodcountRef.orderByChild("foodCount").limitToLast(3).once("value")
       topThreeItems.push({ foodItem, foodCount });
     });
 
-    console.log(topThreeItems);
+    // console.log(topThreeItems);
     const menuRef2 = firebase.database().ref("foodItems2");
     // Now fetch the menu items and display the top three
     menuRef2.on("value", function (snapshot) {
@@ -443,7 +493,7 @@ FoodcountRef.orderByChild("foodCount").limitToLast(3).once("value")
         child.forEach(function (child2) {
           const menuItem2 = child2.val();
           const uniqueInputId = generateUniqueInputId(menuItem2.foodName);
-          console.log( uniqueInputId );
+          // console.log( uniqueInputId );
           // Check if menuItem2.foodName is in the topThreeItems array
           const isTopThree = topThreeItems.some(item => item.foodItem === menuItem2.foodName);
 
@@ -451,7 +501,7 @@ FoodcountRef.orderByChild("foodCount").limitToLast(3).once("value")
             const itemDiv = document.createElement("div");
 
             if (getComputedStyle(container).display !== "none") {
-              console.log(getComputedStyle(container).display)
+              // console.log(getComputedStyle(container).display)
               itemDiv.className = "heighest-ordered-food-item";
             } else {
               itemDiv.className = "food-item2";
@@ -481,7 +531,7 @@ FoodcountRef.orderByChild("foodCount").limitToLast(3).once("value")
               itemDiv.style.filter = 'grayscale(100%)';
             }
             if (getComputedStyle(container).display !== "none") {
-              console.log(getComputedStyle(container).display)
+              // console.log(getComputedStyle(container).display)
               container.appendChild(itemDiv);
             } else {
               containerdesktopview.appendChild(itemDiv);
