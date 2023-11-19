@@ -412,6 +412,7 @@ function add(foodName, cost, uniqueInputId) {
 // Update the display count when the page loads
 // updateCountDisplay();
 
+
 document.getElementById("cart").addEventListener("click", function () {
   window.location.href = "../Html/Order.html";
 });
