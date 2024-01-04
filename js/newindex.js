@@ -173,7 +173,7 @@ function displayMenuItems(menuItem, category) {
     
       ${menuItem.vegNonVeg === "veg"
         ? `
-        <img src="../Images/vegetarian.png" alt="no_img"  id="veg-nonveg" width="10vw"><br>
+        <img src="/Images/vegetarian.png" alt="no_img"  id="veg-nonveg" width="10vw"><br>
       `
         : `
         <img src="../Images/non-vegetarian.png" alt="no_img"  id="veg-nonveg"><br>
@@ -211,7 +211,7 @@ function displayMenuItems(menuItem, category) {
     
       ${menuItem.vegNonVeg === "veg"
         ? `
-        <img src="../Images/vegetarian.png" alt="no_img"  id="veg-nonveg" width="10vw"><br>
+        <img src="/Images/vegetarian.png" alt="no_img"  id="veg-nonveg" width="10vw"><br>
       `
         : `
         <img src="../Images/non-vegetarian.png" alt="no_img"  id="veg-nonveg"><br>
@@ -247,7 +247,7 @@ function displayMenuItems(menuItem, category) {
   else if (category === "Food" || Cat === undefined) {
     itemDiv.innerHTML = `
       ${menuItem.vegNonVeg === "veg"
-        ? `<img src="../Images/vegetarian.png" alt="no_img" id="veg-nonveg" width="10vw"><br>`
+        ? `<img src="/Images/vegetarian.png" alt="no_img" id="veg-nonveg" width="10vw"><br>`
         : `<img src="../Images/non-vegetarian.png" alt="no_img" id="veg-nonveg"><br>`
       }
       <h2 id="food-Name">${menuItem.foodName}</h2>
