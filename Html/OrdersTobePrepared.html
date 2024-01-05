@@ -6,9 +6,9 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard</title>
-  <link rel="shortcut icon" href="../Images/logo.png" type="image/x-icon">
+  <link rel="shortcut icon" href="/Images/logo.png" type="image/x-icon">
 
-  <link rel="stylesheet" href="../css/AdminDashboard.css">
+  <link rel="stylesheet" href="/css/AdminDashboard.css">
 </head>
 
 <body>
@@ -39,6 +39,24 @@
   <div class="main-container">
     <!-- <div class="dashboard"></div> -->
     <div class="dashboard-right">
+      <h2>Orders Prepared</h2><br>
+      <table class="table table-prep">
+          <thead>
+              <tr>
+                  <th>Prepared Orders</th>
+                  
+              </tr>
+          </thead>
+          <tbody>
+            <td id="prepared-orders">
+              <!-- <span id="prep_tk">44</span> -->
+              
+              
+            </td>
+            
+          </tbody>
+      </table><br><br>
+
       <h2>Orders to be Prepared</h2><br>
       <table class="table table-orders">
           <thead>
@@ -46,8 +64,8 @@
                   <th>Sl No</th>
                   <th>Item Name</th>
                   <th>Number of Items</th>
-                  <th>Time</th>
-                  <th>.</th>
+                  <!-- <th>Token(Time)</th> -->
+                  <!-- <th>.</th> -->
               </tr>
           </thead>
       </table><br><br>
@@ -60,7 +78,7 @@
                       <th>Item Name</th>
                       <th>Number of Items</th>
                       <th>Time</th>
-                      <th></th>
+                      <th>done</th>
                   </tr>
               </thead>
               <tbody class="content">
@@ -80,7 +98,7 @@
   <script src="https://www.gstatic.com/firebasejs/5.0.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/5.0.0/firebase-database.js"></script>
   <script src="https://www.gstatic.com/firebasejs/5.0.0/firebase-firestore.js"></script>
-
+  <script src="../js/disableinspect.js"></script>
   <script src="../js/connection_db.js"></script>
   <script src="../js/orderstobeprepared.js"></script>
 </body>
