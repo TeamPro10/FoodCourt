@@ -29,12 +29,40 @@ const usersRef = db.collection("Users");
 // Dictionary to store counts of food items
 var foodItemCounts = {};
 let timearr = [];
-
+var foodItemsTimings = {};
 let foodItemsTokennumbers = {};
 var foodarray = [];
 let tokenconfirmations = [];
+
+function prepared_tokens() {
+  chekedItems.on("value", function (snapshot) {
+    let items = snapshot.val();
+    let tokendisplay = document.getElementById("prepared-orders");
+    if (items) {
+      tokendisplay.innerHTML = "";
+      for (var key in items) {
+        var ItemData = items[key];
+        console.log(ItemData);
+
+        if (ItemData.prepared_status === "prepared") {
+          var div = document.createElement("span");
+          div.setAttribute("id", "prep_tk");
+
+          div.innerHTML = `${key}`;
+
+          tokendisplay.appendChild(div);
+          console.log(key);
+        }
+      }
+    } else {
+      tokendisplay.textContent = "All Items Delivered!";
+    }
+  });
+}
+prepared_tokens();
+
 function order_confirm() {
-  var foodItemsTimings = {}; // Create an object to store food items and their timings
+  // Create an object to store food items and their timings
 
   let count = 0;
   orderstobeprepared.on("value", function (snapshot) {
@@ -105,11 +133,18 @@ function order_confirm() {
               foodItemsTimings[foodItem].push(tokenData.time);
               foodItemsTokennumbers[foodItem].push(key);
               var timeCell = existingRow.querySelector(".item-time");
-              timeCell.textContent = foodItemsTimings[foodItem].join(", ");
+              timeCell.textContent = "";
 
-              var timeCell2 = existingRow.querySelector(".token-numbers");
-              timeCell2.textContent =
-                foodItemsTokennumbers[foodItem].join(", ");
+              for (let i = 0; i < foodItemsTokennumbers[foodItem].length; i++) {
+                const tokenNumber = foodItemsTokennumbers[foodItem][i];
+                const timeData = foodItemsTimings[foodItem][i];
+
+                // Append the token and time information to the corresponding cell
+                timeCell.textContent += `${tokenNumber}(${timeData}), `;
+              }
+
+              // Remove the trailing comma and space
+              timeCell.textContent = timeCell.textContent.slice(0, -2);
             } else {
               // Create a new row
               foodItemsTimings[foodItem] = [tokenData.time]; // Initialize an array to store timings for this food item
@@ -118,17 +153,15 @@ function order_confirm() {
               var newRow = document.createElement("tr");
               newRow.setAttribute("data-food-item", foodItem); // Set a unique data attribute
               newRow.innerHTML = `
-                            <td></td>
-                            <td>${foodItem}</td>
-                            <td class="item-number">1</td>
-                            <td class="item-time">${tokenData.time}</td>
-                            <td class="token-numbers">${foodItemsTokennumbers[
-                  foodItem
-                ].join(", ")}</td>
-
-                          `;
-              // console.log("Token "+foodItemsTokennumbers[foodItem]);
-              // <td><button class="clear-button" data-tokens='${JSON.stringify(foodItemsTokennumbers[foodItem])}' onclick="markOrderAsDone(this, '${foodItem}', '${time}')">Done</button></td>
+                <td></td>
+                <td>${foodItem}</td>
+                <td class="item-number">1</td>
+                <td class="item-time">${foodItemsTokennumbers[foodItem].join(
+                  ", "
+                )}(${tokenData.time})</td>
+              `;
+              // time -token
+              //
 
               // Set the serial number in the first cell of the new row
               var allRows =
@@ -165,65 +198,81 @@ function order_confirm() {
               if (foodItem) {
                 fname = foodItem;
               }
-              const time = row.querySelector("td:nth-child(4)").textContent;
-
-              var timeArray = time.split(",");
+              // console.log(data - food - item);
+              // const time = row.querySelector("td:nth-child(4)").textContent;
+              // console.log(time);
+              // var timeArray =  time.match(/(\d+)\(\d+:\d+\)/g);
               // console.log(timeArray)
 
-              const token = row.querySelector("td:nth-child(5)").textContent;
-              var tokenArray = token.split(",");
-              // console.log(tokenArray)
+              const token = row.querySelector("td:nth-child(4)").textContent;
+              let time;
+              const tokenArray = token.match(
+                /(\d+)\((\d+:\d+\s[APMapm]{2})\)/g
+              );
+
+              if (tokenArray !== null) {
+                console.log("tokenArray", tokenArray, "token", token);
+
+                time = tokenArray.map((item) => {
+                  const match = item.match(/(\d+)\((\d+:\d+\s[APMapm]{2})\)/);
+                  return match ? match[2] : null;
+                });
+
+                // ... rest of your code handling the time array
+              } else {
+                console.log("No tokens found");
+              }
+
+              // console.log(extractedNumbers);
               var itemsorder = document.querySelector(".content");
               itemsorder.innerHTML = "";
+
               let token_count = 0;
-              timeArray.forEach(function (timing) {
-                let token_perticular;
+              tokenArray.forEach(function (timing) {
+                console.log(timing);
+                // Use match to extract the number outside the brackets
+                const match = timing.match(/(\d+)\((\d+:\d+\s[APMapm]{2})\)/);
 
-                token_perticular = tokenArray[token_count];
-                token_count++;
+                if (match) {
+                  // Extracted numbers are in match[1] and match2[1]
+                  let token_perticular = match[1].trim();
+                  let timming = match[2].trim();
+                  // console.log("Token:", token_perticular, "Time:", timming);
 
-                // Trim leading/trailing spaces
-                var timming = timing.trim();
-                // console.log(token_perticular);
+                  // Create a new row in the "Orders to be Prepared" table or find an existing row
+                  var existingRow = itemsorder.querySelector(
+                    `tr[data-food-item-time="${fname}-${token_perticular}"]`
+                  );
 
-                // Create a new row in the "Orders to be Prepared" table or find an existing row
-                var existingRow = itemsorder.querySelector(
-                  `tr[data-food-item-time="${fname}-${timming}"]`
-                );
-                // console.log(existingRow);
-
-                if (existingRow) {
-                  // Update the count in the existing row
-                  var countCell = existingRow.querySelector(".item-number");
-                  var currentCount = parseInt(countCell.textContent);
-                  countCell.textContent = currentCount + 1;
-                } else {
-                  // Create a new row
-                  var done_order = document.querySelector(".done_order");
-                  done_order.innerHTML = `
-                                        <button class="clear-button" data-tokens='${JSON.stringify(
-                    foodItemsTokennumbers[fname]
-                  )}' 
-                                        onclick="markOrderAsDone(this,'${fname}', '${time}')">Done</button><br>
-                                          `;
-                  var newRow = document.createElement("tr");
-                  // console.log(fname);
-                  newRow.setAttribute(
-                    "data-food-item-time",
-                    `${fname}-${timming}`
-                  ); // Set a unique data attribute
-                  newRow.innerHTML = `
-                                       
-                        
-                                        <td>${fname}</td>
-                                        <td class="item-number">1</td>
-                                        <td class="item-time">${timing}</td>
-                                        <button class="clear-button" onclick="addRowToContentTable('${token_perticular}','${fname}','${timing}')">Done</button><br>
-                        
-                                    `;
-
-                  // Append the row to the "Orders to be Prepared" table
-                  itemsorder.appendChild(newRow);
+                  if (existingRow) {
+                    // Update the count in the existing row
+                    var countCell = existingRow.querySelector(".item-number");
+                    var currentCount = parseInt(countCell.textContent);
+                    countCell.textContent = currentCount + 1;
+                  } else {
+                    // Create a new row
+                    var done_order = document.querySelector(".done_order");
+                    done_order.innerHTML = `
+                      <button class="clear-button" data-tokens='${JSON.stringify(
+                        foodItemsTokennumbers[fname]
+                      )}' 
+                      onclick="markOrderAsDone(this,'${fname}', '${time}')">Done</button><br>
+                    `;
+                    var newRow = document.createElement("tr");
+                    newRow.setAttribute(
+                      "data-food-item-time",
+                      `${fname}-${token_perticular}`
+                    ); // Set a unique data attribute
+                    newRow.innerHTML = `
+                      <td>${fname}</td>
+                      <td class="item-number">1</td>
+                      <td class="item-time1">${timing}</td>
+                      <button class="clear-button" onclick="addRowToContentTable('${token_perticular}','${fname}','${timming}')">Done</button><br>
+                    `;
+                    // console.log(fname, token_perticular, timing);
+                    // Append the row to the "Orders to be Prepared" table
+                    itemsorder.appendChild(newRow);
+                  }
                 }
               });
             });
@@ -283,27 +332,34 @@ function addRowToContentTable(token1, itemName, time) {
               if (tokenData && tokenData.foodItem && tokenData.time) {
                 const updateData = {
                   token: tokenData.token,
-                    foodItem: tokenData.foodItem,
-                    gmail: tokenData.gmail,
-                    time: tokenData.time,
-                    amount: tokenData.amount,
-                    prepared_status: "prepared",
+                  foodItem: tokenData.foodItem,
+                  gmail: tokenData.gmail,
+                  time: tokenData.time,
+                  amount: tokenData.amount,
+                  prepared_status: "prepared",
                 };
                 let gmail = tokenData.gmail;
-                console.log(gmail, tokenData.token)
+                console.log(gmail, tokenData.token);
                 if (gmail && tokenData.token) {
-                  let Orderdetails = usersRef.doc(gmail).collection("orderdetails");
+                  let Orderdetails = usersRef
+                    .doc(gmail)
+                    .collection("orderdetails");
 
-                  Orderdetails.doc(tokenData.token).update({
-                    OrderStatus: "prepared",
-                    PayStatus: "paid",
-                  }).then(function () {
-                    console.log("OrderStatus updated successfully.");
-                  }).catch(function (error) {
-                    console.error("Error updating OrderStatus:", error);
-                  });
+                  Orderdetails.doc(tokenData.token)
+                    .update({
+                      OrderStatus: "prepared",
+                      PayStatus: "paid",
+                    })
+                    .then(function () {
+                      console.log("OrderStatus updated successfully.");
+                    })
+                    .catch(function (error) {
+                      console.error("Error updating OrderStatus:", error);
+                    });
                 } else {
-                  console.error("Gmail or key is undefined for an item in checkedItem.");
+                  console.error(
+                    "Gmail or key is undefined for an item in checkedItem."
+                  );
                 }
                 // Updated the order status in Firebase for "checkedItems"
                 checkedItems
@@ -401,63 +457,6 @@ function addRowToContentTable(token1, itemName, time) {
   );
 }
 
-// function markOrderAsDone(button, foodname, time, tokenNumber) {
-//   console.log(tokenNumber["masala dosa"]);
-//   // tokenNumber.forEach((token) => {
-//   //   // Handle marking an order as done if needed
-//   //   // In this example, we remove the item from the "Orders to be Prepared" table
-//   //   // Replace this with your own logic
-//     // const button = document.querySelector(`#doneButton-${token}`);
-//   //   button.closest("tr").remove();
-
-//   //   // Call the function to check if all food items are prepared for this token
-//   //   // checkAllFoodPrepared(token);
-//   // });
-
-// }
-
-//   const tableRow = document.querySelector(".content tr");
-
-// // const tableRows = tableRow;
-//   if(tableRow) {
-//      // Define the tableRows variable
-//     console.log(tableRow);
-//     tableRow.forEach(function (row) {
-//       row.addEventListener("click", function () {
-//         console.log("Click working")
-
-//         // Get all of the rows in the table
-//         const allRows = tableRow;
-
-//         // Find the current row
-//         const currentRow = this;
-
-//         // Loop through all of the rows and remove the border from each row except the current row
-//         allRows.forEach(function (row) {
-//           if (row !== currentRow) {
-//             row.style.boxShadow = "";
-//           }
-//         });
-
-//         // Change the border of the current row
-//         currentRow.style.boxShadow = "0px 0px 5px rgba(0, 0, 0, 0.75)";
-
-//         const foodItem = row.querySelector("td:nth-child(2)").textContent;
-//         if (foodItem) {
-//           fname = foodItem;
-//         }
-//         const time = row.querySelector("td:nth-child(4)").textContent;
-//         console.log(fname, time)
-//         // Create a new row
-//         // var done_order = document.querySelector(".done_order2");
-//         // done_order.innerHTML = `
-//         //       <button class="clear-button" data-tokens='${JSON.stringify(foodItemsTokennumbers[fname])}'
-//         //       onclick="markOrderAsDone(this, '${fname}', '${time}', ${foodItemsTokennumbers[fname]})">Done</button><br>
-//         //       `;
-//       });
-//     });
-//   }
-
 let prepared_items = [];
 let prepared_items_count = 0;
 let remaining_items = {};
@@ -550,7 +549,7 @@ function markOrderAsDone(button, foodname, time) {
               .once("value")
               .then(function (snapshot) {
                 const tokenData = snapshot.val();
-                console.log("here:",tokenData)
+                console.log("here:", tokenData);
                 if (tokenData && tokenData.foodItem && tokenData.time) {
                   const updateData = {
                     token: tokenData.token,
@@ -562,21 +561,28 @@ function markOrderAsDone(button, foodname, time) {
                   };
 
                   let gmail = tokenData.gmail;
-                console.log(gmail, tokenData.token)
-                if (gmail && tokenData.token) {
-                  let Orderdetails = usersRef.doc(gmail).collection("orderdetails");
+                  console.log(gmail, tokenData.token);
+                  if (gmail && tokenData.token) {
+                    let Orderdetails = usersRef
+                      .doc(gmail)
+                      .collection("orderdetails");
 
-                  Orderdetails.doc(tokenData.token).update({
-                    OrderStatus: "prepared",
-                    PayStatus: "paid",
-                  }).then(function () {
-                    console.log("OrderStatus updated successfully.");
-                  }).catch(function (error) {
-                    console.error("Error updating OrderStatus:", error);
-                  });
-                } else {
-                  console.error("Gmail or key is undefined for an item in checkedItem.");
-                }
+                    Orderdetails.doc(tokenData.token)
+                      .update({
+                        OrderStatus: "prepared",
+                        PayStatus: "paid",
+                      })
+                      .then(function () {
+                        console.log("OrderStatus updated successfully.");
+                      })
+                      .catch(function (error) {
+                        console.error("Error updating OrderStatus:", error);
+                      });
+                  } else {
+                    console.error(
+                      "Gmail or key is undefined for an item in checkedItem."
+                    );
+                  }
                   // Updated the order status in Firebase for "checkedItems"
                   checkedItems
                     .set(updateData)
@@ -648,3 +654,9 @@ cancel.addEventListener("click", function () {
 
   sidebar.style.transform = "translateX(-1666px)";
 });
+
+setTimeout(function () {
+  // location.reload();
+  prepared_tokens();
+  order_confirm();
+}, 30000);
