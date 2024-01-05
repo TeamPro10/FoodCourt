@@ -1,14 +1,14 @@
- * {
+/* Add your CSS styles here */
+
+body {
+  
+  font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
 }
 
-body {
-  font-family: Arial, sans-serif;
-
-}
-
 .navbar {
+
   background-color: #3d3c3c;
   color: #fff;
   padding: 10px;
@@ -18,151 +18,8 @@ body {
 }
 
 .navbar-text {
-  margin-left: 20px;
-}
-
-.logout-button {
-  margin-right: 20px;
-  padding: 5px 10px;
-  background-color: #fff;
-  color: #333;
-  border: none;
-  cursor: pointer;
-}
-
-.dashboard-wrapper {
-  display: flex;
-}
-
-
-.dashboard-right {
-  /* display: none; */
-  flex-basis: 50%;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.dashboard-left {
-  flex-basis: 50%;
-  padding: 20px;
-  box-sizing: border-box;
-  border-right: 1px solid #ccc;
-  /* background-color: #e6f7ff; */
-}
-h3 a{
-  text-decoration: none;
-  color:black;
-}
-.done_order{
-  width: 100%;
-
-}
-.done_order button{
-  width: 100%;
-  padding: .5%;
-  font-family: 'Times New Roman', Times, serif;
-  font-weight: bold;
-  border: 1px solid black;
-  border-radius: 10px;
-}
-.done_order2{
-  width: 100%;
-
-}
-.done_order2 button{
-  width: 100%;
-  padding: .5%;
-  font-family: 'Times New Roman', Times, serif;
-  font-weight: bold;
-  border: 1px solid black;
-  border-radius: 10px;
-}
-.table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.table th,
-.table td {
-  padding: 10px;
-  text-align: left;
-}
-
-#download_btn{
-  position: relative;
-  left: 15px;
-  background-color: #4c70af; /* Green */
-  border: none;
-  color: white;
-  padding: 10px 30px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
-}
-
-
-.table th {
-  background-color: #4d88ff;
-  color: #fff;
-}
-
-.table tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
-
-.table-checkorders td:nth-child(1),
-.table-checkorders td:nth-child(2) {
-  text-align: center;
-}
-
-.table-checkorders td:nth-child(3) {
-  text-align: center;
-}
-
-.table-checkorders td:nth-child(4) {
-  text-align: center;
-}
-
-.table-orders td:nth-child(1),
-.table-orders td:nth-child(3) {
-  text-align: center;
-}
-
-.table-orders td:last-child {
-  text-align: center;
-}
-
-.table-unchecked td:nth-child(1),
-.table-unchecked td:nth-child(3) {
-  text-align: center;
-}
-
-.table-unchecked td:last-child {
-  text-align: center;
-}
-
-.confirm-button,
-.cancel-button {
-  padding: 5px 10px;
-  background-color: #333;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-}
-
-.clear-button {
-  padding: 5px 10px;
-  background-color: #333;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-}
-
-.confirm-button {
-  margin-right: 5px;
+  margin-left: 10px;
+  font-size: 15px;
 }
 
 #hamburger-open {
@@ -182,7 +39,8 @@ h3 a{
 }
 
 .element {
-  width: 80%;
+  /* text-decoration: none; */
+  width: 92%;
   /* background-color: #a94848; */
   display: grid;
   grid-template-columns: 10% 90%;
@@ -193,18 +51,24 @@ h3 a{
   cursor: pointer;
   color: #333;
 }
-
+.element img{
+  width: 50%;
+  position: relative;
+  top: 40%;
+}
 .element:hover {
   border-bottom: 3px solid #333;
   background-color: #cbc9c9d2;
 }
 
-.table-orders tr {
-  cursor: pointer;
+.element span a {
+  font-size: 15px;
+  text-decoration: none;
+  color: black;
 }
 
 .sidebar {
-  width: 80vw;
+  width: 20vw;
   height: 100vh;
   position: absolute;
   top: 8%;
@@ -216,48 +80,213 @@ h3 a{
   background-color: rgb(252, 252, 252);
 }
 
+.logout-button {
+  margin-right: 20px;
+  padding: 5px 10px;
+  background-color: #fff;
+  color: #333;
+  border: none;
+  cursor: pointer;
+}
 
-/* Style for the table itself */
-table {
-  font-size: 12px;
+.dashboard-left,
+.dashboard-right {
+  /* display: inline-block; */
+  width: 96%;
+  padding: 20px;
+}
+
+.table-unchecked,
+.table-checked {
   width: 100%;
   border-collapse: collapse;
-  border: 1px solid #ccc;
-  background-color: #fff;
+  margin-top: 20px;
 }
 
-/* Style for table headers */
-th {
-  background-color: #333;
+.table-unchecked th,
+.table-unchecked td,
+.table-checked th,
+.table-checked td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+table th,
+table td {
+  border:1px  black;
+  border-style:dotted;
+  padding: 10px;
+  text-align: left;
+}
+
+table th {
+
+  background-color: #4d88ff;
   color: #fff;
+}
+table {
+  width: 98%;
+  border:1px solid black;
+}
+.popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fefefe;
+  padding: 20px;
+  border: 1px solid #ddd;
+  z-index: 1;
+}
+
+.popup-content {
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+.close-popup {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close-popup:hover {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+.clear-button{
+  background-color: #23793a;
+  color: white;
+  width: 98%;
+  padding:8px;
+  position: relative;
+  top: 4px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.table-prep tbody td {
+  display: flex;
+  flex-wrap: wrap; /* Allow flex items to wrap to the next line */
+}
+
+#prepared-orders {
+  white-space: normal; /* Allow content to wrap to the next line */
+  overflow-x: auto;
+}
+
+#prepared-orders span {
+  margin-right: 10px;
+  background-color: #008CBA;
   padding: 10px;
+  border-radius: 130px;
+  color: white;
+  margin-bottom: 10px; /* Add margin-bottom to create space between spans on a new line */
 }
 
-/* Style for table cells */
-td {
-  padding: 10px;
-  border: 1px solid #ccc;
+#download_btn {
+  position: relative;
+  left: 15px;
+  background-color: #4c70af;
+  /* Green */
+  border: none;
+  color: white;
+  padding: 10px 30px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  cursor: pointer;
 }
 
-/* Style for odd rows (alternating row colors) */
-tbody tr:nth-child(odd) {
-  background-color: #f2f2f2;
+#clear_btn {
+  background-color: #ff3333;
+  /* Red color */
+  color: #fff;
+  /* White text */
+  padding: 10px 20px;
+  /* Adjust padding for better appearance */
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  /* Adjust font size as needed */
+  position: relative;
+  left: 10px;
+
+  /* Responsive styles */
+  @media only screen and (max-width: 768px) {
+
+    padding: 11px 16px;
+    font-size: 14px;
+  }
 }
 
+#close {
+  background-color: #ff3333;
+  /* Red color */
+  color: #fff;
+  /* White text */
+  padding: 10px 20px;
+  /* Adjust padding for better appearance */
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  /* Adjust font size as needed */
+  position: relative;
+
+  /* left: 5px; */
+  /* Responsive styles */
+  @media only screen and (max-width: 768px) {
+
+    padding: 6px 16px;
+    font-size: 14px;
+  }
+}
+
+
+
+
+/* Add more styles as needed */
 
 @media only screen and (max-width: 768px) {
-  body {
-    /* width: 80%; */
-    height: 100vh;
-    font-size: 1.5em;
-    /* Adjust the font size for better readability on smaller screens */
+  body{
+    /* width: fit-content; */
+    
+    height: fit-content;
+  }
+  
+  
+  .dashboard-left,
+.dashboard-right {
+  
+  width: auto;
+  
+}
+  table,
+  .table {
+    width: 95%;
   }
 
+  .table-prep{
+    overflow-x: auto; /* Enable horizontal scrolling if needed */
+    white-space: normal; /* Allow text to wrap */
+    word-wrap: break-word; /* Allow long words to break and wrap onto the next line */
+  }
+  
   #hamburger-cancel {
     display: none;
-    width: 8%;
+    width: 6%;
   }
-
+  .sidebar{
+    width: 100%;
+  }
   .sidebar img {
     width: 20px;
     /* font-size: 8em; */
@@ -278,20 +307,10 @@ tbody tr:nth-child(odd) {
   }
 
   .navbar-text {
-    margin-left: 10px;
+    margin-left: 15px;
   }
 
-  .dashboard {
-    padding: 10px;
-    /* Add some padding to the entire dashboard */
-  }
 
-  /* Adjust the table styles for better mobile viewing */
-  .table th,
-  .table td {
-    padding: 8px;
-    /* font-size: 12px; */
-  }
 
   .clear-button,
   .confirm-button,
@@ -310,75 +329,136 @@ tbody tr:nth-child(odd) {
   }
 
   /* MobileView */
-  .main-container {
-    /* width: fit-content; */
-    height: auto;
-  }
+  
 
   .navbar {
-    /* width: 80%; */
-    /* padding: 10px; */
+    /* width: 100vw; */
+    padding: 10px;
     font-size: .7em;
   }
 
-
-  .table th {
-    padding: 2%;
-    /* font-size: .45em; */
-    height: 35px;
-    text-overflow: clip;
-    text-wrap: break-word;
-    /* text-align: left; */
+  .received-button {
+    
+    height: 20px;
+    position: relative;
+    top: 10px;
   }
-
-  .table td {
-    padding: 2%;
-    /* font-size: .5em; */
-    height: 35px;
-    overflow-x: auto;
-    text-overflow: clip;
-    text-wrap: break-word;
-    /* text-align: left; */
-  }
-
-  .clear-button {
-    padding: 4px 6px;
-    font-size: .9em;
-  }
-
-  .confirm-button,
-  .cancel-button {
-    padding: 4px 6px;
-    font-size: .7em;
-  }
-
-  .logout-button {
-    font-weight: bold;
-    font-size: .5em;
-    margin-right: 10px;
-  }
-
-  #file {
-    padding: 4px 6px;
-    font-size: .5em;
-    width: 100%;
-  }
-
-
 }
-/* Add this CSS to your existing stylesheet or create a new one */
 
-#clear_btn {
-  background-color: #ff3333; /* Red color */
-  color: #fff; /* White text */
-  padding: 10px 20px; /* Adjust padding for better appearance */
-  border: none;
+/* Common style for all action buttons */
+.action-button {
+  background-color: #008CBA;
+  color: white;
+  /* border: none; */
+  width: 100%;
+  border-radius: 5px;
+  padding: 2px 5px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  /* margin: 2px 2px; */
   cursor: pointer;
-  font-size: 16px; /* Adjust font size as needed */
+  background-color: white;
+}
 
-  /* Responsive styles */
-  @media only screen and (max-width: 768px) {
-    padding: 8px 16px;
-    font-size: 14px;
+/* Style for the confirm button */
+.confirm-button {
+  border-color: #4CAF50;
+}
+
+/* Style for the cancel button */
+.cancel-button {
+  border-color: #f44336;
+}
+
+/* Style for the view button */
+.view-button {
+  border-color: #008bbad4;
+}
+
+.item-time{
+  display: none;
+}
+
+
+/* button received */
+.received-button {
+  height: 35px;
+  margin-left: 25%;
+  padding: 0.9em 2em;
+  border: none;
+  outline: none;
+  color: rgb(255, 255, 255);
+  background: #111;
+  cursor: pointer;
+  position: relative;
+  top: 2px;
+  z-index: 0;
+  border-radius: 10px;
+}
+
+.received-button:before {
+  content: "";
+  background: linear-gradient(
+    45deg,
+    #ff0000,
+    #ff7300,
+    #fffb00,
+    #48ff00,
+    #00ffd5,
+    #002bff,
+    #7a00ff,
+    #ff00c8,
+    #ff0000
+  );
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  background-size: 400%;
+  z-index: -1;
+  filter: blur(5px);
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  animation: glowingbn5 20s linear infinite;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  border-radius: 10px;
+}
+
+@keyframes glowingbn5 {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 400% 0;
+  }
+  100% {
+    background-position: 0 0;
   }
 }
+
+.received-button:active {
+  color: #000;
+}
+
+.received-button:active:after {
+  background: transparent;
+}
+
+.received-button:hover:before {
+  opacity: 1;
+}
+
+.received-button:after {
+  z-index: -1;
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #191919;
+  left: 0;
+  top: 0;
+  border-radius: 10px;
+}
+/* -------- */
