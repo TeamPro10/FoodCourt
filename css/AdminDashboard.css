@@ -258,6 +258,8 @@ table {
 @media only screen and (max-width: 768px) {
   body{
     /* width: fit-content; */
+    display: flexbox;
+    width: fit-content;
     
     height: fit-content;
   }
@@ -330,7 +332,7 @@ table {
 
   /* MobileView */
   
-
+ 
   .navbar {
     /* width: 100vw; */
     padding: 10px;
@@ -338,10 +340,14 @@ table {
   }
 
   .received-button {
+     position: relative;
+     
+     right: 20px;
+     width: 90%;
+     height: 20px;
     
-    height: 20px;
-    position: relative;
-    top: 10px;
+    /* position: relative; */
+    /* top: 40px; */
   }
 }
 
@@ -393,7 +399,7 @@ table {
   background: #111;
   cursor: pointer;
   position: relative;
-  top: 2px;
+  top: 7px;
   z-index: 0;
   border-radius: 10px;
 }
@@ -462,3 +468,9 @@ table {
   border-radius: 10px;
 }
 /* -------- */
+.received-button:disabled {
+  background-color: #ff3333; /* Red color for disabled state */
+  color: #ffffff; /* White text color for disabled state */
+  cursor: not-allowed; /* Change cursor to indicate non-interactivity */
+  /* Add any other styling you want for the disabled state */
+}
