@@ -1,12 +1,15 @@
 var database = firebase.database();
+  
 // Reference to the root of your Firebase structure
 let rootRef = database.ref("Orders");
 let chekedItems = database.ref("checkedItems");
 let orderstobeprepared = database.ref("orderstobeprepared");
+
 // Reference to the table body
-var tableBody = document.querySelector(".table-unchecked");
-var tablecheched = document.querySelector(".table-checked");
+var tableBody = document.querySelector(".table-unchecked tbody");
+var tablecheched = document.querySelector(".table-checked tbody");
 var tableBodyOrders = document.querySelector(".table-orders");
+
 // Dictionary to store counts of food items
 var foodItemCounts = {};
 let timearr = [];
@@ -15,8 +18,10 @@ console.log(username);
 
 // Function to display sorted food items
 function displaySortedFoodItems() {
-  // Fetch all tokens from Firebase
+  
+  tableBody.innerHTML="";
   rootRef.once("value").then(function (snapshot) {
+    // Fetch all tokens from Firebase
     var tokens = [];
     snapshot.forEach(function (childSnapshot) {
       var tokenNumber = childSnapshot.key;
@@ -40,38 +45,44 @@ function displaySortedFoodItems() {
       var newRow = document.createElement("tr");
       newRow.setAttribute("data-token-number", token.tokenNumber);
       newRow.innerHTML = `
-        <td>${token.tokenNumber}</td>
-        <td>${token.gmail}</td>
-        <td>${token.foodItems}</td>
-        <td>${formatTime(token.time)}</td>
-        <td><button class="confirm-button" onclick="confirm('${token.foodItems}','${token.time}', '${token.tokenNumber}','${token.amount}','${token.gmail}')">Confirm</button></td>
-        <td><button class="cancel-button" onclick="cancelling('${token.foodItems}','${token.time}', '${token.tokenNumber}','${token.amount}','${token.gmail}')">Cancel</button></td>
-      `;
+      <td>${token.tokenNumber}</td>
+      
+      
+      <td>${formatTime(token.time)}</td>
+      <td><button class="confirm-button action-button" onclick="confirm('${token.foodItems}','${token.time}', '${token.tokenNumber}','${token.amount}','${token.gmail}')"><img src="../Images/icons8-done-50.png" width="20vw" alt="no_img"></button></td>
+      <td><button class="cancel-button action-button" onclick="cancelling('${token.foodItems}','${token.time}', '${token.tokenNumber}','${token.amount}','${token.gmail}')"><img src="../Images/icons8-unchecked-cancel-50.png" width="20vw" alt="no_img"></button></td>
+      <td><button class="view-button action-button" onclick="openPopup('${token.tokenNumber}', '${token.gmail}', '${username}', '${token.foodItems}', '${token.time}', '${token.amount}')"><img src="../Images/icons8-eye-24.png" width="20vw" alt="no_img"></button></td>
+    `;
       tableBody.appendChild(newRow);
+      // <td>${token.foodItems}</td>
     });
   });
-
+  // <td>${token.gmail}</td>
   // Assuming tableBodyOrders is the ID of the table body for checked items
   chekedItems.on("value", function (snapshot) {
     let checkedItem = snapshot.val();
     console.log(checkedItem);
-
+    tablecheched.innerHTML="";
     for (let key in checkedItem) {
       if (checkedItem.hasOwnProperty(key)) {
-        console.log(checkedItem[key].prepared_status);
+        console.log(checkedItem[key].prepared_status,key);
 
         var newRow = document.createElement("tr");
         newRow.setAttribute("data-token-number2", key);
         newRow.innerHTML = `
           <td></td>
-          <td>${checkedItem[key].gmail}</td>
+         
           <td>${key}</td>
-          <td>${checkedItem[key].foodItem}</td>
+          
           <td>${formatTime(checkedItem[key].time)}</td>
-          <td>${checkedItem[key].amount}</td>
           <td>${checkedItem[key].prepared_status}</td>
+          <button class="received-button" onclick="receive('${checkedItem[key].foodItem}', '${checkedItem[key].time}', '${key}', '${checkedItem[key].amount}', '${checkedItem[key].gmail}', '${checkedItem[key].prepared_status}')">Received</button>
+          
+          <td><button class="view-button action-button" onclick="openPopup('${key}', '${checkedItem[key].gmail}', '${username}', '${checkedItem[key].foodItem}', '${checkedItem[key].time}', '${checkedItem[key].amount}')"><img src="../Images/icons8-eye-24.png" width="20vw" alt="no_img"></button></td>
+          
         `;
-
+      //   <td>${checkedItem[key].foodItem}</td>
+      // <td>${checkedItem[key].amount}</td>
         var allRows = tablecheched.querySelectorAll("tr[data-token-number2]");
         newRow.querySelector("td:first-child").textContent = allRows.length + 1;
         tablecheched.appendChild(newRow);
@@ -79,7 +90,7 @@ function displaySortedFoodItems() {
     }
   });
 }
-
+//   <td>${checkedItem[key].gmail}</td>
 // Function to format time to 12-hour format
 function formatTime(time) {
   var formattedTime = new Date("2000-01-01 " + time).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true });
@@ -89,27 +100,23 @@ function formatTime(time) {
 // Call the function to display food items in sorted order
 displaySortedFoodItems();
 
-
-function cancelling(foodItem, time, tokenNumber,Amount,gmail) {
-  // console.log("Cancelling order:", foodItem, time, tokenNumber);
-  // const fooditemref = orderstobeprepared.child(tokenNumber);
-  
+function cancelling(foodItem, time, tokenNumber, Amount, gmail) {
   chekedItems.child(tokenNumber).set({
-    token:tokenNumber,
+    token: tokenNumber,
     foodItem: foodItem,
-    gmail:gmail,
+    gmail: gmail,
     time: time,
-    amount:Amount,
+    amount: Amount,
     prepared_status: "canceled",
   });
 
   rootRef.child(tokenNumber).remove()
-                     .then(function () {
-                      console.log('Token deleted successfully from unchecked');
-                   })
-                  .catch(function (error) {
-                   console.error('Error deleting token from unchecked:', error);
-                   });
+    .then(function () {
+      console.log('Token deleted successfully from unchecked');
+    })
+    .catch(function (error) {
+      console.error('Error deleting token from unchecked:', error);
+    });
 
   // Delete the confirmed order from the "Unchecked Orders" table and Firebase
   var rowToDelete = document.querySelector(
@@ -120,30 +127,30 @@ function cancelling(foodItem, time, tokenNumber,Amount,gmail) {
   }
 }
 
-function confirm(foodname, time, tokenNumber,amount,gmail) {
+function confirm(foodname, time, tokenNumber, amount, gmail) {
   orderstobeprepared.child(tokenNumber).set({
     token: tokenNumber,
     foodItem: foodname,
-    gmail:gmail,
+    gmail: gmail,
     time: time,
-    amount:amount,
+    amount: amount,
     prepared_status: "preparing",
   });
   chekedItems.child(tokenNumber).set({
     token: tokenNumber,
     foodItem: foodname,
-    gmail:gmail,
+    gmail: gmail,
     time: time,
-    amount:amount,
+    amount: amount,
     prepared_status: "preparing",
   });
   rootRef.child(tokenNumber).remove()
-                     .then(function () {
-                      console.log('Token deleted successfully from unchecked');
-                   })
-                  .catch(function (error) {
-                   console.error('Error deleting token from unchecked:', error);
-                   });
+    .then(function () {
+      console.log('Token deleted successfully from unchecked');
+    })
+    .catch(function (error) {
+      console.error('Error deleting token from unchecked:', error);
+    });
 
   // Delete the confirmed order from the "Unchecked Orders" table and Firebase
   var rowToDelete = document.querySelector(
@@ -156,38 +163,96 @@ function confirm(foodname, time, tokenNumber,amount,gmail) {
 
 
 
+function receive(foodname, time, tokenNumber,TotalAmount, gmail, prepared_status) {
+chekedItems.child(tokenNumber).set({
+  token: tokenNumber,
+  foodItem: foodname,
+  gmail: gmail,
+  time: time,
+  amount: TotalAmount,
+  prepared_status: 'received',
+})
+.then(() => {
+  console.log("Data written successfully");
 
+  // Update order status in Firestore
+  if (gmail && tokenNumber) {
+    let Orderdetails = usersRef.doc(gmail).collection("orderdetails");
+
+    Orderdetails.doc(tokenNumber).update({
+      OrderStatus: 'received', // Update the order status to 'received'
+      PayStatus: 'paid',
+      TotalAmount: TotalAmount,
+    })
+    .then(function () {
+      console.log("OrderStatus updated successfully.");
+
+      // Reload the user's profile page or update the UI accordingly
+      location.reload(); // You might want to consider a better way to update the UI.
+    })
+    .catch(function (error) {
+      console.error("Error updating OrderStatus:", error);
+    });
+  } else {
+    console.error("Gmail or key is undefined for an item in checkedItem.");
+  }
+})
+.catch((error) => {
+  console.error("Error writing data: ", error);
+});
+}
+
+
+
+
+// Popup functionality
+function openPopup(token, email, username, itemname, time, totalprice) {
+  document.getElementById('popup-token').textContent = token;
+  document.getElementById('popup-email').textContent = email;
+  document.getElementById('popup-username').textContent = username;
+  document.getElementById('popup-itemname').textContent = itemname;
+  document.getElementById('popup-time').textContent = time;
+  document.getElementById('popup-totalprice').textContent = totalprice;
+
+  document.getElementById('view-popup').style.display = 'block';
+}
+
+function closePopup() {
+  document.getElementById('view-popup').style.display = 'none';
+}
 
 let ham = document.getElementById("hamburger-open");
 let cancel = document.getElementById("hamburger-cancel");
 let sidebar = document.querySelector(".sidebar");
+
 ham.addEventListener("click", function () {
   ham.style.display = "none";
   cancel.style.display = "block";
   sidebar.style.transition = "1s";
   sidebar.style.transform = "translateX(0px)";
 });
+
 cancel.addEventListener("click", function () {
   cancel.style.display = "none";
   ham.style.display = "block";
 
   sidebar.style.transform = "translateX(-1666px)";
 });
-let home = document.getElementById("item1");
+
+// let home = document.getElementById("item1");
 let ordertobeprepared = document.getElementById("item2");
 let dashboardLeft = document.querySelector(".dashboard-left");
 let dashboardRight = document.querySelector(".dashboard-right");
 
-home.addEventListener("click", function () {
-  dashboardLeft.style.display = "block";
-  dashboardRight.style.display = "none";
-});
+// home.addEventListener("click", function () {
+//   dashboardLeft.style.display = "block";
+//   dashboardRight.style.display = "none";
+// });
 
 // ordertobeprepared.addEventListener("click", function () {
 //   dashboardLeft.style.display = "none";
 //   dashboardRight.style.display = "block";
 // });
-
 
 function downloadpdf() {
   chekedItems.once('value')
@@ -211,7 +276,7 @@ function downloadpdf() {
       XLSX.utils.book_append_sheet(workbook, sheet, 'Checked Orders');
 
       // Save the workbook to a file
-      XLSX.writeFile(workbook, 'checked_orders'+'.xlsx');
+      XLSX.writeFile(workbook, 'checked_orders' + '.xlsx');
 
       // Clear the entries from the frontend (remove rows from the table)
       var tableRows = document.querySelectorAll(".table-checked tbody tr");
@@ -254,7 +319,6 @@ function clearData() {
   });
 }
 
-
 //logout
 document.querySelector(".logout-button").addEventListener("click", function () {
   console.log(username);
@@ -267,3 +331,8 @@ document.querySelector(".logout-button").addEventListener("click", function () {
     window.location.href = `login.html`;
   }
 });
+
+setTimeout(function () {
+  // displaySortedFoodItems();
+  // location.reload();
+},60000);//The page will be refreshed for every 1min
