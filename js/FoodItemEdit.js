@@ -1,4 +1,5 @@
 const database = firebase.database();
+
 // Function to render food items from Firebase
 function renderFoodItems() {
     const foodMenu = document.getElementById('food-menu');
@@ -73,6 +74,23 @@ function displayEditSection(container, category, itemId, foodItem, categories) {
         // Handle dropdown change if needed
     });
 
+    const displayCategoryDropdown = document.createElement('select');
+    const displayCategories = ['Snacks and Beverages ', 'Chinese', 'Juices and Chats'];
+
+    displayCategories.forEach((displayCat) => {
+        const displayCatOption = document.createElement('option');
+        displayCatOption.value = displayCat;
+        displayCatOption.text = displayCat;
+        if (displayCat === foodItem.displayCategory) {
+            displayCatOption.selected = true; // Select the current display category
+        }
+        displayCategoryDropdown.appendChild(displayCatOption);
+    });
+
+    displayCategoryDropdown.addEventListener('change', (event) => {
+        // Handle dropdown change if needed
+    });
+
     const itemNameInput = document.createElement('input');
     itemNameInput.type = 'text';
     itemNameInput.placeholder = 'Dish Name';
@@ -120,6 +138,7 @@ function displayEditSection(container, category, itemId, foodItem, categories) {
                 foodName: itemNameInput.value,
                 cost: parseFloat(itemPriceInput.value),
                 vegNonVeg: vegNonvegDropdown.value,
+                displayCategory: displayCategoryDropdown.value,
             };
 
             saveFoodItemChanges(newCategory, itemId, newData)
@@ -135,6 +154,7 @@ function displayEditSection(container, category, itemId, foodItem, categories) {
     });
 
     container.appendChild(categoryDropdown);
+    container.appendChild(displayCategoryDropdown); // Added dropdown for display category
     container.appendChild(itemNameInput);
     container.appendChild(itemPriceInput);
     container.appendChild(vegNonvegDropdown);
@@ -191,5 +211,3 @@ function moveItemToNewCategory(oldCategory, newCategory, itemId, foodItem) {
 
 // Initialize the rendering on page load
 window.onload = renderFoodItems;
-
-

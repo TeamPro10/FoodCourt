@@ -450,7 +450,7 @@ if (username) {
 function redirectToProfile() {
   if (username) {
     console.log("move to profile");
-    window.location.href = `/profile`;
+    window.location.href = `profile.html`;
   } else {
     alert("NOT ALLOWED. Login!!");
   }
@@ -468,11 +468,11 @@ document.getElementById("loginsts").addEventListener("click", function () {
   console.log(username);
   if (username) {
     localStorage.removeItem("inputValue");
-    window.location.href = `/login`;
+    window.location.href = `login.html`;
 
     // You may want to redirect the user to a login page or do something else here
   } else {
-    window.location.href = `/login`;
+    window.location.href = `login.html`;
   }
 
 
