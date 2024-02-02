@@ -39,7 +39,15 @@
                 <option value="veg">veg</option>
                 <option value="nonveg">Nonveg</option>
             </select>
-        
+
+            <label for="display-category">Display Category:</label>
+            <select id="display-category">
+                <option value="dosa">Dosa</option>
+                <option value="chinese">Chinese</option>
+                <option value="Snacks and Beverages ">Snacks  and Beverages </option>
+                
+            </select>
+
             <!-- Custom Category Input (Initially Hidden) -->
             <div id="custom-category-input" style="display: none;">
                 <label for="custom-category">Enter Custom Category:</label>
@@ -49,6 +57,7 @@
             <button type="button" id="save-dish-button">Save</button>
         </form>
     </div>
+    
     <div class="container">
         <h2>Remove Item or Category</h2>
         <form id="remove-form">
@@ -58,28 +67,34 @@
                 <option value="remove-item">Remove Item</option>
                 <option value="remove-category">Remove Category</option>
             </select><br>
+
             <div id="remove-item-section">
                 <label for="remove-item-category">Select Category:</label>
                 <select id="remove-item-category"></select><br>
                 <label for="remove-item-name">Select Item:</label>
                 <select id="remove-item-name"></select><br>
             </div>
+
             <div id="remove-category-section">
                 <label for="remove-category-name">Select Category:</label>
                 <select id="remove-category-name"></select><br>
             </div>
+
             <button type="button" id="remove-button">Remove</button>
+            <br><br><br>
+                <h2>Reset Token:</h2>
+                <center><button id="reset_token" class="styled-button">Reset-Token</button></center>
+            
         </form>
     </div><br>
-
+    <!-- <div id="remove-item-section">
     <h2>Reset Token:</h2>
     <center><button id="reset_token" class="styled-button">Reset-Token</button></center>
-   
-
+    </div> -->
     <script src="https://www.gstatic.com/firebasejs/5.0.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.0.0/firebase-database.js"></script>
     <script src="../js/connection_db.js"></script>
-
+    <script src="../js/disableinspect.js"></script>
     <script src="../js/menu.js"></script>
 </body>
 </html>

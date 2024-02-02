@@ -7,60 +7,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forgot_Password</title>
     <link rel="shortcut icon" href="/Images/logo.png" type="image/x-icon">
-
     <link rel="stylesheet" href="../css/forgotpass.css">
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Font Awesome Icons  -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+        integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA=="
+        crossorigin="anonymous" />
+
+    <!-- Google Fonts  -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
 </head>
 
 <body>
-    <div class="container">
-        <div class="inner1">
-            <h1>Forgot <span>Password??</span></h1>
-            <div class="reset">
-                <form action="/Html/forgotpass.Html" method="post" id="forgotPasswordForm">
-                    <label for="mail">Email :</label>
-                    <input type="email" name="mail" id="mail" placeholder="Email">
-                    <button id="submit">submit</button>
-                    <div id="message"></div>
-
-                </form>
-                <h4>go back to <a href="../Html/login.html"> Login! </a></h4>
-
-            </div>
-        </div>
-        <div class="inner2">
-            <img src="../Images/Screenshot (109).png" alt="no_img">
-        </div>
+    <div class="card" id="forgotPasswordCard">
+        <p class="lock-icon fas fa-lock"></p>
+        <h2>Forgot Password?</h2>
+        <p>You can reset your Password here</p>
+        <input type="text" class="passInput" id="emailInput" placeholder="Email address">
+        <button id="sendPasswordButton">Reset Password</button>
+        <br>
+        <h5>go back to <a href="../Html/login.html" style="color: aliceblue;"> Login! </a></h5>
     </div>
+
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-database-compat.js"></script>
     <script src="firebase-config.js"></script>
     <script src="../js/connection_db.js"></script>
-    <script src="script.js"></script>
+
     <script>
-
-        // const firebaseConfig = {
-        //     apiKey: "AIzaSyCwK0ichC-DJxoec0RFrAPsUMEPIwvQzE4",
-        //     authDomain: "foodcourt-80fc0.firebaseapp.com",
-        //     databaseURL: "https://foodcourt-80fc0-default-rtdb.firebaseio.com",
-        //     projectId: "foodcourt-80fc0",
-        //     storageBucket: "foodcourt-80fc0.appspot.com",
-        //     messagingSenderId: "382207958425",
-        //     appId: "1:382207958425:web:1d65a262f2cd79d168c708",
-        //     measurementId: "G-F94HZSH65B",
-        // };
-
-        // // Initialize Firebase
-        // firebase.initializeApp(firebaseConfig);
         document.addEventListener("DOMContentLoaded", function () {
-            const forgotPasswordForm =
-                document.getElementById("forgotPasswordForm");
-            const message = document.getElementById("message");
+            const forgotPasswordCard = document.getElementById("forgotPasswordCard");
+            const emailInput = document.getElementById("emailInput");
+            const sendPasswordButton = document.getElementById("sendPasswordButton");
 
-            forgotPasswordForm.addEventListener("submit", function (e) {
-                e.preventDefault();
-
-                const email = document.getElementById("mail").value;
+            sendPasswordButton.addEventListener("click", function () {
+                const email = emailInput.value;
 
                 // Send a password reset email using Firebase Auth
                 firebase
@@ -68,22 +56,15 @@
                     .sendPasswordResetEmail(email)
                     .then(function () {
                         // Password reset email sent successfully
-                        
-                            message.textContent = `A password reset link has been sent to ${email}. Check your email inbox.`;
-                            message.style.color = "green";
-                        
-
+                        forgotPasswordCard.innerHTML = `<p class="success-message">A password reset link has been sent to ${email}. Check your email inbox.</p>`;
                     })
                     .catch(function (error) {
                         // An error occurred
-                        message.textContent = `An error occurred: ${error.message}`;
-                        message.style.color = "red";
+                        forgotPasswordCard.innerHTML = `<p class="error-message">An error occurred: ${error.message}</p>`;
                     });
             });
         });
-
     </script>
-
 </body>
 
 </html>

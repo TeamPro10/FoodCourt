@@ -76,7 +76,13 @@ function displaySortedFoodItems() {
           
           <td>${formatTime(checkedItem[key].time)}</td>
           <td>${checkedItem[key].prepared_status}</td>
-          <button class="received-button" onclick="receive('${checkedItem[key].foodItem}', '${checkedItem[key].time}', '${key}', '${checkedItem[key].amount}', '${checkedItem[key].gmail}', '${checkedItem[key].prepared_status}')">Received</button>
+          ${
+            checkedItem[key].prepared_status === "prepared"
+            ? '<td><button class="received-button"  onclick="receive(\'' + checkedItem[key].foodItem + '\', \'' + checkedItem[key].time + '\', \'' + key + '\', \'' + checkedItem[key].amount + '\', \'' + checkedItem[key].gmail + '\', \'' + checkedItem[key].prepared_status + '\')">Received</button></td>'
+            : '<td><button class="received-button disabled" disabled>Received</button></td>'
+        }
+        
+        
           
           <td><button class="view-button action-button" onclick="openPopup('${key}', '${checkedItem[key].gmail}', '${username}', '${checkedItem[key].foodItem}', '${checkedItem[key].time}', '${checkedItem[key].amount}')"><img src="../Images/icons8-eye-24.png" width="20vw" alt="no_img"></button></td>
           
@@ -162,6 +168,7 @@ function confirm(foodname, time, tokenNumber, amount, gmail) {
 }
 
 
+let details = database.ref("details");
 
 function receive(foodname, time, tokenNumber,TotalAmount, gmail, prepared_status) {
 chekedItems.child(tokenNumber).set({
@@ -200,6 +207,23 @@ chekedItems.child(tokenNumber).set({
 .catch((error) => {
   console.error("Error writing data: ", error);
 });
+
+details.child(tokenNumber).set({
+  token:tokenNumber,
+  gmail: gmail,
+  foodItem: foodname,
+  time: time,
+  amount: TotalAmount,
+})
+.then(() => {
+  console.log("Data written successfully");
+})
+.catch((error) => {
+  console.error("Error writing data: ", error);
+});
+chekedItems.child(tokenNumber).remove();
+console.log("cleared")
+location.reload();
 }
 
 

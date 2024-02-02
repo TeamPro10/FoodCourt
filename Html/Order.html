@@ -71,7 +71,7 @@
 
           <span>Total amt: Rs. 0.00</span><br><br>
           <div class="cart-buttons">
-            <button id="clear-cart">Clear Cart</button>
+            <button id="clear-cart" onclick="clearCart();">Clear Cart</button>
             <button id="pay">Pay</button>
           </div>
 
@@ -80,6 +80,11 @@
 
       </div>
     </div>
+    <script src="https://www.gstatic.com/firebasejs/5.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.0.0/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.0.0/firebase-database.js"></script>
+    <script src="../js/connection_db.js"></script>
+    <script src="../js/disableinspect.js"></script>
     <!-- <script src="../js/connection_db.js"></script> -->
     <script src="../js/order.js"></script>
 </body>

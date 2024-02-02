@@ -1,7 +1,7 @@
 /* Add your CSS styles here */
 
 body {
-  
+  background-color: #213c429a;
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
@@ -258,8 +258,6 @@ table {
 @media only screen and (max-width: 768px) {
   body{
     /* width: fit-content; */
-    display: flexbox;
-    width: fit-content;
     
     height: fit-content;
   }
@@ -332,7 +330,7 @@ table {
 
   /* MobileView */
   
- 
+
   .navbar {
     /* width: 100vw; */
     padding: 10px;
@@ -340,14 +338,10 @@ table {
   }
 
   .received-button {
-     position: relative;
-     
-     right: 20px;
-     width: 90%;
-     height: 20px;
     
-    /* position: relative; */
-    /* top: 40px; */
+    height: 20px;
+    position: relative;
+    top: 10px;
   }
 }
 
@@ -399,7 +393,7 @@ table {
   background: #111;
   cursor: pointer;
   position: relative;
-  top: 7px;
+  top: 2px;
   z-index: 0;
   border-radius: 10px;
 }

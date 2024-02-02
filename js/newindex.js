@@ -190,7 +190,7 @@ function displayMenuItems(menuItem, category) {
         <button class="plus" onclick="plus('${uniqueInputId}')">+</button>
     </div>
     ${menuItem.quantity > 0
-        ? `<button id="add" onclick="add('${menuItem.foodName}', ${menuItem.cost}, '${uniqueInputId}')" 
+        ? `<button id="add" onclick="add('${menuItem.foodName}','${menuItem.displayCategory}', ${menuItem.cost}, '${uniqueInputId}')" 
           ${menuItem.quantity <= 0 ? 'disabled' : ''}>Add</button><br>`
         : ''
       }
@@ -228,7 +228,7 @@ function displayMenuItems(menuItem, category) {
         <button class="plus" onclick="plus('${uniqueInputId}')">+</button>
     </div>
     ${menuItem.quantity > 0
-        ? `<button id="add" onclick="add('${menuItem.foodName}', ${menuItem.cost}, '${uniqueInputId}')" 
+        ? `<button id="add" onclick="add('${menuItem.foodName}','${menuItem.displayCategory}', ${menuItem.cost}, '${uniqueInputId}')" 
           ${menuItem.quantity <= 0 ? 'disabled' : ''}>Add</button><br>`
         : ''
       }
@@ -260,7 +260,7 @@ function displayMenuItems(menuItem, category) {
           <button class="plus" onclick="plus('${uniqueInputId}')">+</button>
       </div>
       ${menuItem.quantity > 0
-        ? `<button id="add" onclick="add('${menuItem.foodName}', ${menuItem.cost}, '${uniqueInputId}')" 
+        ? `<button id="add" onclick="add('${menuItem.foodName}','${menuItem.displayCategory}', ${menuItem.cost}, '${uniqueInputId}')" 
             ${menuItem.quantity <= 0 ? 'disabled' : ''}>Add</button><br>`
         : ''
       }
@@ -318,26 +318,12 @@ function plus(uniqueInputId) {
 }
 
 
-function redirectToCheckoutPage() {
-  var cart = JSON.parse(localStorage.getItem("cart")) || [];
-  if (cart.length > 0) {
-    var queryString = cart
-      .map(function (item) {
-        return encodeURIComponent(item.name) + "=" + encodeURIComponent(item.quantity) + "&imagePath=" + encodeURIComponent(item.imagePath);
-      })
-      .join("&");
-
-    window.location.href = "/checkout.html?" + queryString;
-  } else {
-    alert("Your cart is empty. Add items to your cart before proceeding.");
-  }
-}
 
 let fooditemcount = JSON.parse(localStorage.getItem("fooditemcount"))|| [];
 
 // let count = 0;
 
-// Function to update the display count
+// Function to update the Food count on cart icon
 function updateCountDisplay() {
   const storedCount = JSON.parse(localStorage.getItem("fooditemcount"));
   if(storedCount.length > 0 && storedCount!=null) {
@@ -363,10 +349,18 @@ function updateCountDisplay() {
 // window.onload = initializeCountFromLocalStorage;
 
 // // Update the display count when the page loads
-updateCountDisplay();
+const storedCount = JSON.parse(localStorage.getItem("fooditemcount"));
+if(storedCount !== null) {
+  updateCountDisplay();
+}else{
+  console.log("no Items in cart")
+}
 
 
-function add(foodName, cost, uniqueInputId) {
+
+function add(foodName, displayCategory,cost, uniqueInputId) {
+
+  // console.log(displayCategory)
   var cart = JSON.parse(localStorage.getItem("cart")) || [];
   var selectElement = document.getElementById(uniqueInputId);
 
@@ -375,6 +369,7 @@ function add(foodName, cost, uniqueInputId) {
     console.error("Invalid element ID: " + uniqueInputId);
     return;
   }
+  // this is for the cart icon in the nav bar
   if (!fooditemcount.includes(foodName)) {
     console.log("in")
     fooditemcount.push(foodName);
@@ -385,12 +380,15 @@ function add(foodName, cost, uniqueInputId) {
   }else{
     console.log("not in")
   }
+  // ********************************
+
   var qnty = parseInt(selectElement.value);
 
   if (!isNaN(cost)) {
     cart.push({
       name: foodName,
       price: cost,
+      category:displayCategory,
       quantity: qnty,
     });
 
@@ -512,9 +510,16 @@ FoodcountRef.orderByChild("foodCount").limitToLast(3).once("value")
             }
 
 
-            itemDiv.innerHTML = `<h2 id="food-Name">${menuItem2.foodName}</h2>
+            itemDiv.innerHTML = `
+            ${menuItem2.vegNonVeg === "veg"
+            ? `<img src="../Images/vegetarian.png" alt="no_img" id="veg-nonveg" width="10vw"><br>`
+            : `<img src="../Images/non-vegetarian.png" alt="no_img" id="veg-nonveg"><br>`
+          }
+            
+            
+            <h2 id="food-Name">${menuItem2.foodName}</h2>
             <h4 >Rs.<span id="price">${menuItem2.cost}</span> </h4>
-            <p id="description">Count:${menuItem2.quantity}</p>
+            <p id="description">Available Count:${menuItem2.quantity}</p>
             <span id="qty">Quantity:</span>
             <div class="quantity">
                 <button class="minus" onclick="minus('${uniqueInputId}')">-</button>
