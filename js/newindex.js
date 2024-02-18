@@ -460,11 +460,11 @@ document.getElementById("loginsts").addEventListener("click", function () {
   console.log(username);
   if (username) {
     localStorage.removeItem("inputValue");
-    window.location.href = `login.html`;
+    window.location.href = `./Html/login.html`;
 
     // You may want to redirect the user to a login page or do something else here
   } else {
-    window.location.href = `login.html`;
+    window.location.href = `./Html/login.html`;
   }
 });
 
