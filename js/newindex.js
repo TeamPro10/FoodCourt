@@ -446,7 +446,7 @@ function redirectToProfile() {
 
   if (username) {
     console.log("move to profile");
-    window.location.href = `profile.html`;
+    window.location.href = `./Html/profile.html`;
   } else {
     alert("NOT ALLOWED. Login!!");
   }
