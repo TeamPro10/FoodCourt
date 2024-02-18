@@ -8,37 +8,35 @@ var database = firebase.database();
 let rootRef = database.ref("Orders");
 let FoodcountRef = database.ref("Foodcounts");
 let categoryRef = database.ref("foodItems2");
-let username = localStorage.getItem('inputValue');
+let username = localStorage.getItem("inputValue");
 const usersRef = db.collection("Users");
 let Orderdetails;
 let categories = [];
+
 if (username !== null) {
-  console.log(username)
+  console.log(username);
   //realtimedatabase
 
   Orderdetails = usersRef.doc(username).collection("orderdetails");
 } else {
-  console.warn("loginnn for further operation!")
+  console.warn("loginnn for further operation!");
 }
 
-
-var cart = JSON.parse(localStorage.getItem('cart'));
+var cart = JSON.parse(localStorage.getItem("cart"));
 let cartitemcount = 0;
 if (cart !== null) {
   cart.forEach(function (item) {
     cartitemcount = cartitemcount + 1;
-  })
+  });
 }
-
-
 
 // Function to format hours and minutes as a 12-hour time string with AM/PM
 function format12HourTime(hours, minutes) {
-  var period = hours >= 12 ? 'PM' : 'AM';
+  var period = hours >= 12 ? "PM" : "AM";
   hours = hours % 12 || 12;
 
   // Format the time in HH:mm AM/PM
-  var formattedTime = `${hours}:${minutes < 10 ? '0' : ''}${minutes} ${period}`;
+  var formattedTime = `${hours}:${minutes < 10 ? "0" : ""}${minutes} ${period}`;
 
   return formattedTime;
 }
@@ -46,11 +44,10 @@ function format12HourTime(hours, minutes) {
 // console.log(cartitemcount);
 function placeorder() {
   let token;
-  
-  var cart = JSON.parse(localStorage.getItem('cart'));
+
+  var cart = JSON.parse(localStorage.getItem("cart"));
   // console.log(username)
   tokenref.once("value").then(function (snapshot) {
-
     token = snapshot.val().token;
     // console.log(snapshot.val().token);
 
@@ -58,7 +55,7 @@ function placeorder() {
     if (cart && cart.length > 0) {
       // You need to implement a function to generate a unique token
       var selectedTime = localStorage.getItem("time");
-      // console.log(selectedTime)
+      // console.log(selectedTime);
       var time;
 
       if (selectedTime) {
@@ -66,16 +63,17 @@ function placeorder() {
         var dateObject = new Date(selectedTime);
 
         // Format the time
-        // console.log(dateObject)
-        var time = format12HourTime(dateObject.getHours(), dateObject.getMinutes());
+        console.log(dateObject)
+        var time = format12HourTime(
+          dateObject.getHours(),
+          dateObject.getMinutes()
+        );
         // console.log("Formatted Time:", formattedTime);
       } else {
         console.log("No time found in localStorage");
       }
 
-
       // console.log(time);
-
 
       const currentDate = new Date();
 
@@ -86,87 +84,87 @@ function placeorder() {
       var date = day + "/" + month + "/" + year;
 
       cart.forEach(function (item) {
-
         if (!categories.includes(item.category)) {
           categories.push(item.category);
           // console.log(item.category);
         }
-        
       });
       let index;
       // Loop through the cart items and save each one as a separate order
-      while (categories.length !== 0){
-        console.log("length-cat-before:",categories.length,categories);
+      while (categories.length !== 0) {
+        console.log("length-cat-before:", categories.length, categories);
         cart.forEach(function (item) {
           index = categories.length - 1;
           if (categories[categories.length - 1] === item.category) {
-            console.log("Token:",token);
-            // console.log("FoodItem:",item.name);
-            Orderdetails.doc(token.toString()).collection("items").add({
+            console.log("Token:", token);
+            console.log("FoodItem:", item.name);
+            Orderdetails.doc(token.toString())
+              .collection("items")
+              .add({
                 Ordered_Food: item.name,
                 quantity: item.quantity,
                 Price: item.quantity * item.price,
-                Date:date
-            }).then(function (docRef) {
-                
-               
-                console.log("Order details saved successfully with ID: ", docRef.id);
-
-            }).catch(function (error) {
+                Date: date,
+              })
+              .then(function (docRef) {
+                console.log(
+                  "Order details saved successfully with ID: ",
+                  docRef.id
+                );
+              })
+              .catch(function (error) {
                 console.error("Error saving order details:", error);
-            });
-            addfood_to_uncheckedlist(token, username, time, item.name, item.quantity)
-            console.log("passing token:",token);
+              });
+            // console.log("passing token:",token,username, time, item.name, item.quantity)
+            addfood_to_uncheckedlist(
+              token,
+              username,
+              time,
+              item.name,
+              item.quantity
+            );
+            console.log("passing token:", token);
           }
-
-
-
         });
         const totalAmount = localStorage.getItem("totalAmount");
-      console.log("realtime:", totalAmount);
-      const PaymentStatus = "Paid"
-      // Save the total amount for the order (assuming you want a single total amount for all items)
-      Orderdetails.doc(token.toString()).set({
-        TotalAmount: totalAmount,
-        PayStatus: PaymentStatus,
-        OrderStatus: "ordered"
-      }).then(function () {
-        console.log("Total amount saved successfully.");
+        console.log("realtime:", totalAmount);
+        const PaymentStatus = "Paid";
+        // Save the total amount for the order (assuming you want a single total amount for all items)
+        Orderdetails.doc(token.toString())
+          .set({
+            TotalAmount: totalAmount,
+            PayStatus: PaymentStatus,
+            OrderStatus: "ordered",
+          })
+          .then(function () {
+            console.log("Total amount saved successfully.");
 
-        localStorage.removeItem('cart');
-        localStorage.removeItem('fooditemcount')
-        localStorage.removeItem("time");
-        // location.reload();
-      }).catch(function (error) {
-        console.error("Error saving total amount:", error);
-      });
+            localStorage.removeItem("cart");
+            localStorage.removeItem("fooditemcount");
+            localStorage.removeItem("time");
+            // console.log(cart, " ", fooditemcount, " ", time);
+            location.reload();
+          })
+          .catch(function (error) {
+            console.error("Error saving total amount:", error);
+          });
         // Remove the processed category from the array
         categories.splice(index, 1);
-        console.log("length-cat-after:",categories.length,categories);
+        console.log("length-cat-after:", categories.length, categories);
         token += 1;
         tokenref.set({
           token: token,
         });
-      } 
-
-
-
-      
-
+      }
 
       // console.log("token",token);
-
     } else {
-      alert("UR order is Already placed once!!")
+      alert("UR order is Already placed once!!");
     }
     //realtimedatabase
-
   });
 
-
   // });
-
-
 }
 
 let foodItems = {};
@@ -174,7 +172,7 @@ let foodcount = {};
 let finalorderplacecounter = 0;
 function addfood_to_uncheckedlist(token, email, time, foodname, quantity) {
   let count;
-   console.log(token);
+  console.log(token);
   // Initialize the array if it doesn't exist for the given token
   if (!foodItems[token]) {
     foodItems[token] = [];
@@ -190,7 +188,6 @@ function addfood_to_uncheckedlist(token, email, time, foodname, quantity) {
   const retrievedArray = JSON.parse(foodquantity);
   // console.log(retrievedArray[foodname]);
 
-
   // if (foodquantity && foodquantity[foodname] !== undefined) {
   //     const C = foodquantity[foodname];
   //     console.log(foodquantity);
@@ -198,13 +195,13 @@ function addfood_to_uncheckedlist(token, email, time, foodname, quantity) {
   //     console.log('The foodquantity property is undefined or the foodname property does not exist.');
   // }
 
-  FcountRef.once('value')
-    .then(snapshot => {
+  FcountRef.once("value")
+    .then((snapshot) => {
       const Fcount = snapshot.val();
 
       // Check if Fcount exists and has a count property
-      if (Fcount && Fcount.hasOwnProperty('foodCount')) {
-        count = parseInt(Fcount.foodCount) + parseInt(retrievedArray[foodname])
+      if (Fcount && Fcount.hasOwnProperty("foodCount")) {
+        count = parseInt(Fcount.foodCount) + parseInt(retrievedArray[foodname]);
       } else {
         count = parseInt(retrievedArray[foodname]);
         // console.log("count :", count);
@@ -215,47 +212,49 @@ function addfood_to_uncheckedlist(token, email, time, foodname, quantity) {
       // console.log(foodcount[foodname]);
       // Save the count to Firebase
       FcountRef.set({
-        foodCount: foodcount[foodname]
-      }).then(() => {
-        finalorderplacecounter = finalorderplacecounter + 1;
-        // console.log(finalorderplacecounter);
+        foodCount: foodcount[foodname],
+      })
+        .then(() => {
+          finalorderplacecounter = finalorderplacecounter + 1;
+          // console.log(finalorderplacecounter);
 
-        if (cartitemcount === finalorderplacecounter) {
-          
-          alert("Order placed successfully!!");
-          console.log("Count saved successfully.");
-          location.reload();
-        }
-      }).catch(error => {
-        console.error("Error saving Count Details.", error);
-      });
-
+          if (cartitemcount === finalorderplacecounter) {
+            alert("Order placed successfully!!");
+            console.log("Count saved successfully.");
+            // location.reload();
+          }
+        })
+        .catch((error) => {
+          console.error("Error saving Count Details.", error);
+        });
     })
-    .catch(error => {
+    .catch((error) => {
       console.error("Error fetching count from Firebase:", error);
     });
 
   // console.log(foodItems[token]);
   const TotalAmount = localStorage.getItem("totalAmount");
   // console.log("Realtime:",time);
-  rootRef.child(token).set({
-    foodItem: foodItems[token].join(','),
-    Email: email,
-    Quantity: quantity,
-    TotalAmount: TotalAmount,
-    time: time,
-    prepared_status: "ordered",
-  }).then(() => {
-
-    console.log("Details saved successfully.",token);
-  }).catch(error => {
-    console.error("Error saving Details.", error);
-  });
+  rootRef
+    .child(token)
+    .set({
+      foodItem: foodItems[token].join(","),
+      Email: email,
+      Quantity: quantity,
+      TotalAmount: TotalAmount,
+      time: time,
+      prepared_status: "ordered",
+    })
+    .then(() => {
+      console.log("Details saved successfully.", token);
+    })
+    .catch((error) => {
+      console.error("Error saving Details.", error);
+    });
   // token += 1;
   // tokenref.set({
   //   token: token,
   // });
-
 }
 // Function to display cart items from local storage
 document.addEventListener("click", function (event) {
@@ -269,7 +268,7 @@ function displayCartItems() {
   var cart = JSON.parse(localStorage.getItem("cart"));
   var count = JSON.parse(localStorage.getItem("fooditemcount"));
 
-  console.log(count)
+  console.log(count);
   // Clear the cart list before adding items
   var cartList = document.querySelector(".menu ul");
   cartList.innerHTML = ""; // Remove all items from the cart
@@ -279,11 +278,10 @@ function displayCartItems() {
     var itemQuantities = {}; // To track item quantities
     let heighestorderqunty = {};
     cart.forEach(function (item) {
-      heighestorderqunty[(item.name)] = item.quantity;
+      heighestorderqunty[item.name] = item.quantity;
       // console.log(heighestorderqunty);
 
       localStorage.setItem("quantity", JSON.stringify(heighestorderqunty));
-
 
       // console.log(retrievedArray[item.name]);
 
@@ -314,14 +312,13 @@ function displayCartItems() {
       cartList.appendChild(listItem);
 
       totalAmount += itemData.totalPrice; // Update the total amount
-
     }
 
     // Update the total amount
     var totalAmountSpan = document.querySelector(".cart span");
     totalAmountSpan.textContent = "Total amt: Rs. " + totalAmount.toFixed(2);
     localStorage.setItem("totalAmount", totalAmount.toFixed(2));
-    console.log(totalAmount)
+    console.log(totalAmount);
 
     // Apply CSS styles (if needed) to the total amount span
     totalAmountSpan.style.fontSize = "24px"; // Adjust the font size as needed
@@ -345,7 +342,7 @@ function removeItem(itemName) {
 
 // Function to clear the cart and refresh the page
 function clearCart() {
-  localStorage.removeItem("fooditemcount")
+  localStorage.removeItem("fooditemcount");
   // Clear items from local storage
   localStorage.removeItem("cart");
 
@@ -361,8 +358,19 @@ window.addEventListener("load", displayCartItems);
 
 // Add click event listener to the "Pay" button
 
+// ***************************************payment start*******************************************************
+// Define a function to create Razorpay instance
+function createRazorpayInstance(options) {
+  return new Razorpayy(options);
+}
+
+// Flag variable to track whether Razorpay configuration has been executed
+let razorpayConfigured = false;
+
 document.getElementById("pay").addEventListener("click", function () {
   // Retrieve necessary details
+  // let username = localStorage.getItem('inputValue');
+  let phone, name;
   if (username !== null) {
     var cart = JSON.parse(localStorage.getItem("cart"));
     var orderTime = document.getElementById("order-time").value;
@@ -377,64 +385,88 @@ document.getElementById("pay").addEventListener("click", function () {
       var selectedTime = new Date("2000-01-01 " + orderTime);
       var lowerLimit = new Date("2000-01-01 10:30");
       var upperLimit = new Date("2000-01-01 18:00");
-      console.log(selectedTime)
+      console.log(selectedTime);
       if (selectedTime >= lowerLimit && selectedTime <= upperLimit) {
         // selectedTime = parse12HourTime(orderTime);
         localStorage.setItem("time", selectedTime); // Move to the payment page
         console.log("Order-Time :", selectedTime);
-
       } else {
         alert("Delivery time must be between 10:30 and 18:00");
       }
-
 
       if (selectedTime >= lowerLimit && selectedTime <= upperLimit) {
-        // Construct the Paytm payment URL with necessary parameters
-        var paytmURL = "https://securegw.paytm.in/theia/processTransaction";
-        var merchantID = "your_merchant_id"; // Replace with your actual merchant ID
-        var orderID = "your_order_id"; // Replace with your actual order ID
-        var callbackURL = "your_callback_url"; // Replace with your actual callback URL
+        // Retrieve total amount from localStorage
+        const TotalAmount = localStorage.getItem("totalAmount");
 
-        // Create a form dynamically
-        var form = document.createElement("form");
-        form.setAttribute("method", "post");
-        form.setAttribute("action", paytmURL);
+        // Fetch user details
+        // const usersRef = db.collection("Users");
+        usersRef
+          .doc(username)
+          .get()
+          .then((doc) => {
+            if (doc.exists) {
+              phone = doc.data().Phone;
+              name = doc.data().UserName;
 
-        // Add hidden input fields with transaction details
-        var fields = [
-          { name: "MID", value: merchantID },
-          { name: "ORDER_ID", value: orderID },
-          { name: "CUST_ID", value: "customer_id" }, // Replace with your actual customer ID
-          { name: "TXN_AMOUNT", value: totalAmount },
-          { name: "CALLBACK_URL", value: callbackURL },
-        ];
+              // Configure Razorpay object if it hasn't been configured yet
+              if (!razorpayConfigured) {
+                const razorpayConfig = {
+                  key: "rzp_test_j6KWJ17yYlWYl7",
+                  amount: TotalAmount * 100, // Convert to smallest currency unit (paise)
+                  currency: "INR",
+                  name: "FoodCourt MITE",
+                  description: "Pay & Checkout this Food",
+                  image:
+                    "https://media.geeksforgeeks.org/wp-content/uploads/20210806114908/dummy-200x200.png",
+                  handler: function (response) {
+                    console.log(response, "Payment Succeeded");
+                    console.log("res: ", razorpayInstance);
+                    placeorder();
+                    // alert("Payment succeeded");
 
-        fields.forEach(function (field) {
-          var input = document.createElement("input");
-          input.setAttribute("type", "hidden");
-          input.setAttribute("name", field.name);
-          input.setAttribute("value", field.value);
-          form.appendChild(input);
-        });
+                    // Execute additional actions upon successful payment
+                  },
+                  prefill: {
+                    contact: phone,
+                    name: name,
+                    email: username,
+                  },
+                  notes: {
+                    description:
+                      "Breakfast, Meals, fastfood, Beverages, Chats, Icecream",
+                    language: "Available in MITE",
+                    access: "limited quantity!",
+                  },
+                  theme: {
+                    color: "#2300a3",
+                  },
+                  method: {
+                    card: true,
+                    netbanking: true,
+                    upi: true,
+                  },
+                };
 
+                // Create Razorpay instance and store it in a variable
+                const razorpayInstance = createRazorpayInstance(razorpayConfig);
 
-
-        // Append the form to the body and submit it
-        document.body.appendChild(form);
-        placeorder();
-
-        // form.submit();
-
-
+                // Set flag to true to indicate that Razorpay has been configured
+                razorpayConfigured = true;
+              }
+            } else {
+              console.warn("No such document!");
+            }
+          })
+          .catch((error) => {
+            console.error("Error getting document:", error);
+          });
       } else {
         alert("Delivery time must be between 10:30 and 18:00");
       }
-
     }
   } else {
-    alert("Please Login to continue!")
+    alert("Please Login to continue!");
   }
-
 });
 
 // ******login/logout******************
@@ -450,7 +482,7 @@ if (username) {
 function redirectToProfile() {
   if (username) {
     console.log("move to profile");
-    window.location.href = `profile.html`;
+    window.location.href = `/profile`;
   } else {
     alert("NOT ALLOWED. Login!!");
   }
@@ -468,14 +500,11 @@ document.getElementById("loginsts").addEventListener("click", function () {
   console.log(username);
   if (username) {
     localStorage.removeItem("inputValue");
-    window.location.href = `login.html`;
+    window.location.href = `/login`;
 
     // You may want to redirect the user to a login page or do something else here
   } else {
-    window.location.href = `login.html`;
+    window.location.href = `/login`;
   }
-
-
-
 });
 // ********************************
